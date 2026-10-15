@@ -1,0 +1,18 @@
+---
+import { useTranslations, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const year = new Date().getFullYear();
+---
+
+<footer class="flex flex-wrap items-center justify-between gap-4 border-t border-line p-4 text-sm text-muted">
+  <p>© {year} Sarah Mertens · {t('footer.made')}</p>
+  <ul class="flex gap-4">
+    <li><a href="https://github.com/SarahMertens" rel="me">GitHub</a></li>
+  </ul>
+</footer>
