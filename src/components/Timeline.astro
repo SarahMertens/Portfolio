@@ -1,0 +1,27 @@
+---
+import type { TimelineItem } from '../data/about';
+
+interface Props {
+  title: string;
+  items: TimelineItem[];
+}
+
+const { title, items } = Astro.props;
+---
+
+<section>
+  <h2>{title}</h2>
+  <!-- Een geordende lijst: de volgorde (nieuwste eerst) betekent iets -->
+  <ol class="relative space-y-6 border-l-2 border-line pl-6">
+    {
+      items.map((item) => (
+        <li class="relative">
+          <span class="absolute top-1.5 -left-[31px] h-3 w-3 rounded-full border-2 border-accent bg-bg" aria-hidden="true" />
+          <p class="font-mono text-xs text-muted">{item.period}</p>
+          <p class="font-semibold">{item.title}</p>
+          <p class="text-sm text-muted">{item.place}</p>
+        </li>
+      ))
+    }
+  </ol>
+</section>
