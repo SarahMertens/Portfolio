@@ -51,3 +51,43 @@
     @apply outline-3 outline-offset-2 outline-accent;
   }
 }
+
+@layer components {
+  .project-content {
+    @apply leading-relaxed;
+  }
+
+  .project-content h2 {
+    @apply mt-10;
+  }
+
+  .project-content h3 {
+    @apply mt-6;
+  }
+
+  .project-content p,
+  .project-content ul,
+  .project-content ol {
+    @apply mb-4;
+  }
+
+  .project-content ul {
+    @apply list-disc pl-6;
+  }
+
+  .project-content ol {
+    @apply list-decimal pl-6;
+  }
+
+  .project-content li {
+    @apply mb-1;
+  }
+
+  .project-content code {
+    @apply rounded-theme bg-surface px-1 font-mono text-sm;
+  }
+
+  .project-content strong {
+    @apply font-semibold text-fg;
+  }
+}
