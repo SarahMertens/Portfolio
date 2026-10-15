@@ -1,0 +1,47 @@
+---
+interface Props {
+  text: string;
+  label: string;
+  doneLabel: string;
+}
+
+const { text, label, doneLabel } = Astro.props;
+---
+
+<copy-button data-text={text} data-label={label} data-done={doneLabel}>
+  <button
+    type="button"
+    hidden
+    class="cursor-pointer rounded-theme border border-line px-3 py-1.5 text-sm text-fg hover:border-accent"
+  >
+    {label}
+  </button>
+  <span class="sr-only" aria-live="polite"></span>
+</copy-button>
+
+<script>
+  class CopyButton extends HTMLElement {
+    connectedCallback() {
+      const button = this.querySelector('button');
+      const status = this.querySelector('[aria-live]');
+      if (!button || !status || !navigator.clipboard) return;
+
+      button.hidden = false;
+      button.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(this.dataset.text ?? '');
+          button.textContent = this.dataset.done ?? '';
+          status.textContent = this.dataset.done ?? '';
+          setTimeout(() => {
+            button.textContent = this.dataset.label ?? '';
+            status.textContent = '';
+          }, 2000);
+        } catch {
+          // Geen toegang tot het klembord: het adres staat er nog altijd om te selecteren.
+        }
+      });
+    }
+  }
+
+  customElements.define('copy-button', CopyButton);
+</script>

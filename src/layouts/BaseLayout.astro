@@ -30,6 +30,7 @@ const alternates = (Object.keys(languages) as Lang[]).map((l) => ({
     <meta name="description" content={pageDescription} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     {alternates.map((a) => <link rel="alternate" hreflang={a.lang} href={a.href} />)}
+    <slot name="head" />
   </head>
   <body class="flex min-h-screen flex-col">
     <a

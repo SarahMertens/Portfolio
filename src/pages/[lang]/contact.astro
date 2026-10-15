@@ -1,5 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import CopyButton from '../../components/CopyButton.astro';
+import { site } from '../../data/site';
 import { getLangPaths, useTranslations, type Lang } from '../../i18n/ui';
 
 export function getStaticPaths() {
@@ -8,8 +10,95 @@ export function getStaticPaths() {
 
 const lang = Astro.params.lang as Lang;
 const t = useTranslations(lang);
+
+// Alleen links tonen die ingevuld zijn in src/data/site.ts
+const profiles = [
+  { name: 'GitHub', url: site.github },
+  { name: 'LinkedIn', url: site.linkedin },
+].filter((profile) => profile.url);
+
+const inputClass =
+  'w-full rounded-theme border border-line bg-bg px-3 py-2 text-fg focus:border-accent';
 ---
 
-<BaseLayout lang={lang} title={t('contact.title')}>
+<BaseLayout lang={lang} title={t('contact.title')} description={t('contact.intro')}>
   <h1>{t('contact.title')}</h1>
+  <p class="mb-10 max-w-2xl text-lg text-muted">{t('contact.intro')}</p>
+
+  <div class="grid gap-10 lg:grid-cols-2">
+    <!-- Rechtstreeks contact -->
+    <section class="space-y-8">
+      <div class="rounded-theme border border-line bg-surface p-6">
+        <h2 class="text-xl">{t('contact.email')}</h2>
+        <div class="flex flex-wrap items-center gap-3">
+          <a href={`mailto:${site.email}`} class="text-lg font-semibold break-all">{site.email}</a>
+          <CopyButton text={site.email} label={t('contact.copy')} doneLabel={t('contact.copied')} />
+        </div>
+      </div>
+
+      <div>
+        <h2 class="text-xl">{t('contact.elsewhere')}</h2>
+        <ul class="flex flex-wrap gap-3">
+          {
+            profiles.map(({ name, url }) => (
+              <li>
+                <a href={url} rel="me" class="inline-block rounded-theme border border-line px-4 py-2 text-fg no-underline hover:border-accent">
+                  {name} ↗
+                </a>
+              </li>
+            ))
+          }
+          {
+            site.cv && (
+              <li>
+                <a href={site.cv} download class="inline-block rounded-theme border border-line px-4 py-2 text-fg no-underline hover:border-accent">
+                  {t('contact.cv')}
+                </a>
+              </li>
+            )
+          }
+        </ul>
+      </div>
+    </section>
+
+    <!-- Contactformulier, verwerkt door Netlify Forms -->
+    <section aria-labelledby="form-title" class="rounded-theme border border-line p-6">
+      <h2 id="form-title" class="text-xl">{t('contact.formTitle')}</h2>
+      <form
+        name="contact"
+        method="POST"
+        action={`/${lang}/thanks/`}
+        data-netlify="true"
+        netlify-honeypot="website"
+        class="space-y-4"
+      >
+        <!-- Netlify moet weten bij welk formulier een inzending hoort -->
+        <input type="hidden" name="form-name" value="contact" />
+        <input type="hidden" name="language" value={lang} />
+
+        <!-- Honeypot: onzichtbaar voor mensen. Een spambot vult het in, en dan gooit Netlify de inzending weg. -->
+        <p class="hidden">
+          <label>Website <input name="website" tabindex="-1" autocomplete="off" /></label>
+        </p>
+
+        <div>
+          <label for="name" class="mb-1 block text-sm font-semibold">{t('contact.name')}</label>
+          <input id="name" name="name" required autocomplete="name" class={inputClass} />
+        </div>
+        <div>
+          <label for="email" class="mb-1 block text-sm font-semibold">{t('contact.yourEmail')}</label>
+          <input id="email" name="email" type="email" required autocomplete="email" class={inputClass} />
+        </div>
+        <div>
+          <label for="message" class="mb-1 block text-sm font-semibold">{t('contact.message')}</label>
+          <textarea id="message" name="message" rows="6" required class={inputClass}></textarea>
+        </div>
+
+        <button type="submit" class="cursor-pointer rounded-theme bg-accent px-5 py-2.5 font-semibold text-bg hover:opacity-90">
+          {t('contact.send')}
+        </button>
+        <p class="text-xs text-muted">{t('contact.privacy')}</p>
+      </form>
+    </section>
+  </div>
 </BaseLayout>
