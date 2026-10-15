@@ -22,7 +22,7 @@ interface Props {
 const { project } = Astro.props;
 const lang = projectLang(project);
 const t = useTranslations(lang);
-const { title, summary, year, context, role, tech, github, demo, embed, demoNote, cover, coverAlt } = project.data;
+const { title, summary, year, context, role, tech, github, demo, embed, demoNote, video, videoPoster, cover, coverAlt } = project.data;
 const { Content } = await render(project);
 ---
 
@@ -63,6 +63,19 @@ const { Content } = await render(project);
       )
     }
     
+        {
+      video && (
+        <video
+          src={video}
+          poster={videoPoster}
+          controls
+          muted
+          playsinline
+          preload="none"
+          class="mb-10 w-full rounded-theme border border-line"
+        />
+      )
+    }
     {demo && embed && <DemoEmbed url={demo} title={title} note={demoNote} lang={lang} />}
     {cover && <Image src={cover} alt={coverAlt ?? ''} class="mb-10 w-full rounded-theme border border-line" widths={[800, 1200]} sizes="(min-width: 768px) 768px, 100vw" />}
 

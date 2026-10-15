@@ -7,6 +7,8 @@ context: personal
 role: Built entirely by me
 tech: [Java, Swing, Java 2D, Maven, JUnit 5, Mockito]
 github: https://github.com/SarahMertens/Doolhof
+video: /videos/doolhof-gameplay.mp4
+videoPoster: /videos/doolhof-poster.jpg
 ---
 
 ## The game

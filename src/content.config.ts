@@ -19,6 +19,8 @@ const projects = defineCollection({
       demo: z.url().optional(),
       embed: z.boolean().default(false),
       demoNote: z.string().optional(),
+      video: z.string().optional(),
+      videoPoster: z.string().optional(),
       cover: image().optional(),
       coverAlt: z.string().optional(),
     }),
