@@ -7,6 +7,8 @@ context: personal
 role: Built entirely by me
 tech: [Java, Fabric, Gradle, JUnit 5, Mockito, GitHub Actions]
 github: https://github.com/SarahMertens/minecraft_skilltree
+video: /videos/skilltree-video.mp4
+videoPoster: /videos/skilltree-poster.jpg
 ---
 
 ## What the mod does
