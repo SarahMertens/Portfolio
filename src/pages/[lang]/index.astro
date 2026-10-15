@@ -1,6 +1,9 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getLangPaths, useTranslations, type Lang } from '../../i18n/ui';
+import ProjectCard from '../../components/ProjectCard.astro';
+import { site } from '../../data/site';
+import { getLangPaths, useTranslations, type Lang, type UiKey } from '../../i18n/ui';
+import { getProjects } from '../../lib/projects';
 
 export function getStaticPaths() {
   return getLangPaths();
@@ -8,8 +11,70 @@ export function getStaticPaths() {
 
 const lang = Astro.params.lang as Lang;
 const t = useTranslations(lang);
+
+const featured = (await getProjects(lang)).filter((project) => project.data.featured);
+
+const strengths: { title: UiKey; text: UiKey }[] = [
+  { title: 'home.why1Title', text: 'home.why1Text' },
+  { title: 'home.why2Title', text: 'home.why2Text' },
+  { title: 'home.why3Title', text: 'home.why3Text' },
+];
 ---
 
-<BaseLayout lang={lang} title={t('home.title')}>
-  <h1>{t('home.title')}</h1>
+<BaseLayout lang={lang} title={t('home.metaTitle')}>
+  <!-- Hero: wie ben ik, wat doe ik, wat zoek ik -->
+  <section aria-labelledby="hero-title" class="py-12 md:py-20">
+    <p class="mb-3 font-mono text-sm text-accent">{t('home.eyebrow')}</p>
+    <h1 id="hero-title" class="mb-6 text-5xl md:text-6xl">{t('home.title')}</h1>
+    <p class="mb-6 max-w-2xl text-lg text-muted md:text-xl">{t('home.intro')}</p>
+
+    <p class="mb-8 inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1 text-sm">
+      <span class="h-2 w-2 rounded-full bg-green-600" aria-hidden="true"></span>
+      {t('home.status')}
+    </p>
+
+    <div class="flex flex-wrap gap-3">
+      <a href={`/${lang}/projects/`} class="rounded-theme bg-accent px-5 py-3 font-semibold text-bg no-underline hover:opacity-90">
+        {t('home.ctaProjects')} →
+      </a>
+      <a href={`/${lang}/contact/`} class="rounded-theme border border-line px-5 py-3 font-semibold text-fg no-underline hover:border-accent">
+        {t('home.ctaContact')}
+      </a>
+    </div>
+  </section>
+
+  <!-- Wat maakt mij anders -->
+  <section aria-labelledby="why-title" class="mb-16">
+    <h2 id="why-title">{t('home.whyTitle')}</h2>
+    <div class="grid gap-6 md:grid-cols-3">
+      {
+        strengths.map(({ title, text }) => (
+          <div class="rounded-theme border border-line bg-surface p-5">
+            <h3>{t(title)}</h3>
+            <p class="text-muted">{t(text)}</p>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- Uitgelichte projecten -->
+  <section aria-labelledby="featured-title" class="mb-16">
+    <div class="mb-4 flex flex-wrap items-baseline justify-between gap-2">
+      <h2 id="featured-title" class="mb-0">{t('home.featuredTitle')}</h2>
+      <a href={`/${lang}/projects/`}>{t('home.allProjects')} →</a>
+    </div>
+    <div class="grid gap-6 md:grid-cols-2">
+      {featured.map((project) => <ProjectCard project={project} lang={lang} />)}
+    </div>
+  </section>
+
+  <!-- Afsluiter: contact -->
+  <section aria-labelledby="contact-title" class="mb-8 rounded-theme border border-line bg-surface p-8 text-center">
+    <h2 id="contact-title">{t('home.contactTitle')}</h2>
+    <p class="mx-auto mb-6 max-w-xl text-muted">{t('home.contactText')}</p>
+    <a href={`mailto:${site.email}`} class="inline-block rounded-theme bg-accent px-5 py-3 font-semibold text-bg no-underline hover:opacity-90">
+      {site.email}
+    </a>
+  </section>
 </BaseLayout>

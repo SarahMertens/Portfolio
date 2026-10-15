@@ -10,7 +10,7 @@ interface Props {
 }
 
 const { project, lang } = Astro.props;
-const { title, summary, tech, year, context, cover, coverAlt } = project.data;
+const { title, summary, tech, year, context, cover, coverAlt, demo } = project.data;
 const t = useTranslations(lang);
 const href = `/${lang}/projects/${projectSlug(project)}/`;
 ---
@@ -25,9 +25,18 @@ const href = `/${lang}/projects/${projectSlug(project)}/`;
   }
 
   <div class="flex flex-1 flex-col gap-3 p-4">
-    <p class="font-mono text-xs text-muted">
-      {year} · {t(`context.${context}`)}
-    </p>
+    <div class="flex items-center justify-between gap-2">
+      <p class="font-mono text-xs text-muted">
+        {year} · {t(`context.${context}`)}
+      </p>
+      {
+        demo && (
+          <span class="rounded-full border border-accent px-2 py-0.5 font-mono text-xs text-accent">
+            ▶ {t('project.live')}
+          </span>
+        )
+      }
+    </div>
 
     <h3 class="mb-0">
       <a href={href} class="text-fg no-underline after:absolute after:inset-0 group-hover:text-accent">

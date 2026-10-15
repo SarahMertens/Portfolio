@@ -19,6 +19,29 @@ export const ui = {
     'nav.contact': 'Contact',
     'lang.switch': 'Bekijk deze pagina in het Engels',
     'home.title': 'Hallo, ik ben Sarah',
+    'home.metaTitle': 'Full stack developer in opleiding',
+    'home.eyebrow': 'Full stack developer in opleiding',
+    'home.intro':
+      'Ik ben laatstejaarsstudent Toegepaste Informatica aan HOGENT. Ik bouw software die echte problemen oplost voor echte mensen: van een boekhoudapp voor een vrijwilligersgroep tot het ticketbeheer van een toneelgroep.',
+    'home.status': 'Op zoek naar een stageplaats',
+    'home.ctaProjects': 'Bekijk mijn projecten',
+    'home.ctaContact': 'Neem contact op',
+    'home.whyTitle': 'Wat ik meebreng',
+    'home.why1Title': 'Voor echte gebruikers',
+    'home.why1Text':
+      'Mijn projecten worden echt gebruikt, door een vrijwilligersorganisatie, een vriendenkring en een toneelgroep. Ik luister eerst, en bouw dan.',
+    'home.why2Title': 'Veiligheid in mijn achtergrond',
+    'home.why2Text':
+      'Als bewakingsagent denk ik vanzelf na over wie wat mag zien. Dat neem ik mee in mijn code: rollen, rechten en geen geheimen in de repository.',
+    'home.why3Title': 'Kalm onder druk',
+    'home.why3Text':
+      'Als duiker leerde ik rustig te blijven als iets onverwacht loopt. Handig als een test om middernacht nog altijd rood is.',
+    'home.featuredTitle': 'Uitgelichte projecten',
+    'home.allProjects': 'Alle projecten',
+    'home.contactTitle': 'Zin om samen te werken?',
+    'home.contactText':
+      'Ik zoek een stage als full stack developer. Stuur me gerust een berichtje.',
+    'project.live': 'Live demo',
     'projects.title': 'Projecten',
     'about.title': 'Over mij',
     'contact.title': 'Contact',
@@ -56,6 +79,29 @@ export const ui = {
     'nav.contact': 'Contact',
     'lang.switch': 'View this page in Dutch',
     'home.title': "Hi, I'm Sarah",
+    'home.metaTitle': 'Full stack developer in training',
+    'home.eyebrow': 'Full stack developer in training',
+    'home.intro':
+      "I'm a final-year Applied Computer Science student at HOGENT. I build software that solves real problems for real people: from a bookkeeping app for a volunteer group to the box office of a theatre company.",
+    'home.status': 'Looking for an internship',
+    'home.ctaProjects': 'See my projects',
+    'home.ctaContact': 'Get in touch',
+    'home.whyTitle': 'What I bring',
+    'home.why1Title': 'Built for real users',
+    'home.why1Text':
+      'My projects are used for real, by a volunteer organisation, a social club and a theatre group. I listen first, then I build.',
+    'home.why2Title': 'Security is in my background',
+    'home.why2Text':
+      'As a security guard and prevention advisor, I naturally think about who may see what. I bring that into my code: roles, permissions and no secrets in the repository.',
+    'home.why3Title': 'Calm under pressure',
+    'home.why3Text':
+      'As a diver I learned to stay calm when things go unexpectedly. Useful when a test is still red at midnight.',
+    'home.featuredTitle': 'Featured projects',
+    'home.allProjects': 'All projects',
+    'home.contactTitle': 'Want to work together?',
+    'home.contactText':
+      "I'm looking for an internship as a full stack developer. Feel free to send me a message.",
+    'project.live': 'Live demo',
     'projects.title': 'Projects',
     'about.title': 'About me',
     'contact.title': 'Contact',
