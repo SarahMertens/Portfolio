@@ -22,17 +22,21 @@ const otherLang: Lang = lang === 'nl' ? 'en' : 'nl';
 const otherLangHref = switchLangPath(Astro.url.pathname, otherLang);
 ---
 
-<header class="site-header">
-  <a class="logo" href={`/${lang}/`}>SM</a>
+<header class="flex items-center gap-8 border-b border-line p-4">
+  <a class="font-mono text-xl font-bold text-fg no-underline" href={`/${lang}/`}>SM</a>
 
-  <nav aria-label={t('nav.label')}>
-    <ul>
+  <nav class="flex-1" aria-label={t('nav.label')}>
+    <ul class="flex flex-wrap gap-4">
       {
         links.map(({ path, label }) => {
           const href = normalize(`/${lang}/${path}`);
           return (
             <li>
-              <a href={`${href}/`} aria-current={currentPath === href ? 'page' : undefined}>
+              <a
+                href={`${href}/`}
+                aria-current={currentPath === href ? 'page' : undefined}
+                class="text-fg no-underline underline-offset-4 hover:text-accent hover:underline aria-[current=page]:text-accent aria-[current=page]:underline"
+              >
                 {t(label)}
               </a>
             </li>
@@ -42,59 +46,13 @@ const otherLangHref = switchLangPath(Astro.url.pathname, otherLang);
     </ul>
   </nav>
 
-  <a class="lang-switch" href={otherLangHref} hreflang={otherLang} lang={otherLang} title={t('lang.switch')}>
+  <a
+    class="rounded-theme border border-line px-2 py-1 font-mono text-fg no-underline hover:border-accent"
+    href={otherLangHref}
+    hreflang={otherLang}
+    lang={otherLang}
+    title={t('lang.switch')}
+  >
     {otherLang.toUpperCase()}
   </a>
 </header>
-
-<style>
-  .site-header {
-    display: flex;
-    align-items: center;
-    gap: var(--space-l);
-    padding: var(--space-m);
-    border-bottom: 1px solid var(--color-border);
-  }
-
-  .logo {
-    font-family: var(--font-mono);
-    font-weight: 700;
-    font-size: 1.25rem;
-    text-decoration: none;
-    color: var(--color-text);
-  }
-
-  nav {
-    flex: 1;
-  }
-
-  ul {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-m);
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  nav a {
-    color: var(--color-text);
-    text-decoration: none;
-  }
-
-  nav a:hover,
-  nav a[aria-current='page'] {
-    color: var(--color-accent);
-    text-decoration: underline;
-    text-underline-offset: 4px;
-  }
-
-  .lang-switch {
-    padding: var(--space-xs) var(--space-s);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-    color: var(--color-text);
-    text-decoration: none;
-    font-family: var(--font-mono);
-  }
-</style>
