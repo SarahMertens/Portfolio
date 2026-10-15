@@ -1,0 +1,71 @@
+---
+import { Image } from 'astro:assets';
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import TechList from '../../../components/TechList.astro';
+import { useTranslations } from '../../../i18n/ui';
+import { projectLang, projectSlug, type Project } from '../../../lib/projects';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects');
+  return projects.map((project) => ({
+    params: { lang: projectLang(project), slug: projectSlug(project) },
+    props: { project },
+  }));
+}
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+const lang = projectLang(project);
+const t = useTranslations(lang);
+const { title, summary, year, context, role, tech, github, demo, cover, coverAlt } = project.data;
+const { Content } = await render(project);
+---
+
+<BaseLayout lang={lang} title={title} description={summary}>
+  <article class="max-w-3xl">
+    <a href={`/${lang}/projects/`} class="mb-6 inline-block text-sm">← {t('project.back')}</a>
+
+    <h1 class="mb-3">{title}</h1>
+    <p class="mb-8 text-lg text-muted">{summary}</p>
+
+    <dl class="mb-6 grid grid-cols-[auto_1fr] gap-x-6 gap-y-1 text-sm">
+      <dt class="text-muted">{t('project.year')}</dt>
+      <dd>{year}</dd>
+      <dt class="text-muted">{t('project.context')}</dt>
+      <dd>{t(`context.${context}`)}</dd>
+      <dt class="text-muted">{t('project.role')}</dt>
+      <dd>{role}</dd>
+    </dl>
+
+    <div class="mb-6">
+      <TechList tech={tech} label={t('project.tech')} />
+    </div>
+
+    {
+      (github || demo) && (
+        <div class="mb-10 flex flex-wrap gap-3">
+          {github && (
+            <a href={github} class="rounded-theme border border-line px-4 py-2 text-fg no-underline hover:border-accent">
+              {t('project.code')} ↗
+            </a>
+          )}
+          {demo && (
+            <a href={demo} class="rounded-theme bg-accent px-4 py-2 text-bg no-underline hover:opacity-90">
+              {t('project.demo')} ↗
+            </a>
+          )}
+        </div>
+      )
+    }
+
+    {cover && <Image src={cover} alt={coverAlt ?? ''} class="mb-10 w-full rounded-theme border border-line" widths={[800, 1200]} sizes="(min-width: 768px) 768px, 100vw" />}
+
+    <div class="project-content">
+      <Content />
+    </div>
+  </article>
+</BaseLayout>
