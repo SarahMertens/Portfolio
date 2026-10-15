@@ -1,0 +1,42 @@
+---
+import { Image } from 'astro:assets';
+import TechList from './TechList.astro';
+import { useTranslations, type Lang } from '../i18n/ui';
+import { projectSlug, type Project } from '../lib/projects';
+
+interface Props {
+  project: Project;
+  lang: Lang;
+}
+
+const { project, lang } = Astro.props;
+const { title, summary, tech, year, context, cover, coverAlt } = project.data;
+const t = useTranslations(lang);
+const href = `/${lang}/projects/${projectSlug(project)}/`;
+---
+
+<article
+  class="group relative flex flex-col overflow-hidden rounded-theme border border-line bg-bg transition-colors hover:border-accent"
+>
+  {
+    cover && (
+      <Image src={cover} alt={coverAlt ?? ''} class="aspect-video w-full object-cover" widths={[400, 800]} sizes="(min-width: 768px) 400px, 100vw" />
+    )
+  }
+
+  <div class="flex flex-1 flex-col gap-3 p-4">
+    <p class="font-mono text-xs text-muted">
+      {year} · {t(`context.${context}`)}
+    </p>
+
+    <h3 class="mb-0">
+      <a href={href} class="text-fg no-underline after:absolute after:inset-0 group-hover:text-accent">
+        {title}
+      </a>
+    </h3>
+
+    <p class="flex-1 text-muted">{summary}</p>
+
+    <TechList tech={tech} label={t('project.tech')} />
+  </div>
+</article>
