@@ -5,8 +5,23 @@ order: 5
 year: 2026
 context: internship
 role: Built entirely by me
-tech: [React, TypeScript, Tailwind CSS, NestJS, Drizzle ORM, MySQL, Docker, Jest, Cypress, GitHub Actions]
+tech:
+  [
+    React,
+    TypeScript,
+    Tailwind CSS,
+    NestJS,
+    Drizzle ORM,
+    MySQL,
+    Docker,
+    Jest,
+    Cypress,
+    GitHub Actions,
+  ]
 github: https://github.com/SarahMertens/WeatherApp
+demo: https://weatherly-sarahmertens.netlify.app
+embed: true
+demoNote: Het weer is live. Deze demo draait zonder backend, dus favorieten worden in je eigen browser bewaard in plaats van in MySQL. De volledige code met NestJS-backend staat op GitHub.
 ---
 
 ## The assignment
@@ -15,7 +30,7 @@ A take-home assignment for a full-stack internship: build a weather app where yo
 
 ## What I built
 
-- City search as you type (with *debouncing*, so not every keystroke sends a request)
+- City search as you type (with _debouncing_, so not every keystroke sends a request)
 - Temperature, feels-like temperature, humidity, wind and a weather icon, in Celsius or Fahrenheit
 - Favourites stored in MySQL, without duplicates
 - Clear loading, empty and error states

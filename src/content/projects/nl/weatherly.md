@@ -5,8 +5,23 @@ order: 5
 year: 2026
 context: internship
 role: Volledig zelf ontwikkeld
-tech: [React, TypeScript, Tailwind CSS, NestJS, Drizzle ORM, MySQL, Docker, Jest, Cypress, GitHub Actions]
+tech:
+  [
+    React,
+    TypeScript,
+    Tailwind CSS,
+    NestJS,
+    Drizzle ORM,
+    MySQL,
+    Docker,
+    Jest,
+    Cypress,
+    GitHub Actions,
+  ]
 github: https://github.com/SarahMertens/WeatherApp
+demo: https://weatherly-sarahmertens.netlify.app
+embed: true
+demoNote: The weather is live. This demo runs without the backend, so favourites are stored in your own browser instead of MySQL. The full code with the NestJS backend is on GitHub.
 ---
 
 ## De opdracht
@@ -15,7 +30,7 @@ Een thuisopdracht voor een full-stack stage: bouw een weerapp waarin je steden k
 
 ## Wat ik bouwde
 
-- Steden zoeken terwijl je typt (met *debouncing*, zodat niet bij elke toets een verzoek vertrekt)
+- Steden zoeken terwijl je typt (met _debouncing_, zodat niet bij elke toets een verzoek vertrekt)
 - Temperatuur, gevoelstemperatuur, vochtigheid, wind en een weericoon, in Celsius of Fahrenheit
 - Favorieten die bewaard worden in MySQL, zonder dubbels
 - Duidelijke toestanden voor laden, geen resultaten en fouten
