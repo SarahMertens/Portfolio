@@ -6,7 +6,20 @@ order: 4
 year: 2026
 context: volunteer
 role: Volledig zelf ontwikkeld, in overleg met de gebruiker
-tech: [JavaScript, HTML, CSS, JSZip, Office Open XML, Node.js test runner, GitHub Actions]
+tech:
+  [
+    JavaScript,
+    HTML,
+    CSS,
+    JSZip,
+    Office Open XML,
+    Node.js test runner,
+    GitHub Actions,
+  ]
+github: https://github.com/SarahMertens/programmamaker-demo
+demo: https://sarahmertens.github.io/programmamaker-demo/
+embed: true
+demoNote: Klik in de app op "Probeer met voorbeelden" om drie ingestuurde activiteiten in te laden. Alle namen en nummers zijn verzonnen.
 ---
 
 ## Het probleem

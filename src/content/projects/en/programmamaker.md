@@ -6,7 +6,20 @@ order: 4
 year: 2026
 context: volunteer
 role: Built entirely by me, together with the user
-tech: [JavaScript, HTML, CSS, JSZip, Office Open XML, Node.js test runner, GitHub Actions]
+tech:
+  [
+    JavaScript,
+    HTML,
+    CSS,
+    JSZip,
+    Office Open XML,
+    Node.js test runner,
+    GitHub Actions,
+  ]
+github: https://github.com/SarahMertens/programmamaker-demo
+demo: https://sarahmertens.github.io/programmamaker-demo/
+embed: true
+demoNote: Click "Probeer met voorbeelden" (Try with examples) to load three submitted activities. All names and numbers are made up. The interface is in Dutch.
 ---
 
 ## The problem
