@@ -6,13 +6,25 @@ order: 3
 year: 2026
 context: personal
 role: Built entirely by me
-tech: [C#, Blazor WebAssembly, .NET, Firebase, Cloud Firestore, xUnit, GitHub Actions]
+tech:
+  [
+    C#,
+    Blazor WebAssembly,
+    .NET,
+    Firebase,
+    Cloud Firestore,
+    xUnit,
+    GitHub Actions,
+  ]
 github: https://github.com/SarahMertens/Toneel-website
+demo: https://sarahmertens.github.io/Toneel-website/
+embed: true
+demoNote: Choose demo mode on the sign-in screen. It uses made-up data that is only stored in your own browser. The interface is in Dutch.
 ---
 
 ## The problem
 
-For the play *Er was eens … Rare Wereld!* by theatre group De Ballon, reservations had to be tracked somewhere: who reserved how many seats for which performance, and how many seats are left?
+For the play _Er was eens … Rare Wereld!_ by theatre group De Ballon, reservations had to be tracked somewhere: who reserved how many seats for which performance, and how many seats are left?
 
 ## What the app does
 

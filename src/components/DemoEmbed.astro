@@ -1,0 +1,59 @@
+---
+import { useTranslations, type Lang } from '../i18n/ui';
+
+interface Props {
+  url: string;
+  title: string;
+  note?: string;
+  lang: Lang;
+}
+
+const { url, title, note, lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<section aria-labelledby="demo-title" class="mb-10 rounded-theme border border-line bg-surface p-4">
+  <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+    <h2 id="demo-title" class="mb-0">{t('demo.title')}</h2>
+    <a href={url} target="_blank" rel="noopener" class="text-sm">
+      {t('demo.newTab')} ↗
+    </a>
+  </div>
+
+  {note && <p class="mb-4 text-sm text-muted">{note}</p>}
+
+  <demo-embed data-url={url} data-title={`${t('demo.frameTitle')} ${title}`}>
+    <div class="flex aspect-video flex-col items-center justify-center gap-2 rounded-theme border border-dashed border-line bg-bg">
+      <button
+        type="button"
+        class="cursor-pointer rounded-theme bg-accent px-5 py-2.5 font-semibold text-bg hover:opacity-90"
+      >
+        ▶ {t('demo.start')}
+      </button>
+      <p class="text-xs text-muted">{t('demo.loadNote')}</p>
+    </div>
+  </demo-embed>
+</section>
+
+<script>
+  class DemoEmbed extends HTMLElement {
+    connectedCallback() {
+      const button = this.querySelector('button');
+      button?.addEventListener('click', () => this.load(), { once: true });
+    }
+
+    load() {
+      const iframe = document.createElement('iframe');
+      iframe.src = this.dataset.url ?? '';
+      iframe.title = this.dataset.title ?? '';
+      iframe.className = 'h-[80vh] min-h-[500px] w-full rounded-theme border border-line bg-white';
+      iframe.loading = 'eager';
+      iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-forms allow-popups allow-downloads allow-modals');
+
+      this.replaceChildren(iframe);
+      iframe.focus();
+    }
+  }
+
+  customElements.define('demo-embed', DemoEmbed);
+</script>

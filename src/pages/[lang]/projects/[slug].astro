@@ -3,6 +3,7 @@ import { Image } from 'astro:assets';
 import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import TechList from '../../../components/TechList.astro';
+import DemoEmbed from '../../../components/DemoEmbed.astro';
 import { useTranslations } from '../../../i18n/ui';
 import { projectLang, projectSlug, type Project } from '../../../lib/projects';
 
@@ -21,7 +22,7 @@ interface Props {
 const { project } = Astro.props;
 const lang = projectLang(project);
 const t = useTranslations(lang);
-const { title, summary, year, context, role, tech, github, demo, cover, coverAlt } = project.data;
+const { title, summary, year, context, role, tech, github, demo, embed, demoNote, cover, coverAlt } = project.data;
 const { Content } = await render(project);
 ---
 
@@ -61,7 +62,8 @@ const { Content } = await render(project);
         </div>
       )
     }
-
+    
+    {demo && embed && <DemoEmbed url={demo} title={title} note={demoNote} lang={lang} />}
     {cover && <Image src={cover} alt={coverAlt ?? ''} class="mb-10 w-full rounded-theme border border-line" widths={[800, 1200]} sizes="(min-width: 768px) 768px, 100vw" />}
 
     <div class="project-content">

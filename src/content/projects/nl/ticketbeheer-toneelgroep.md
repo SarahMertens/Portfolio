@@ -6,13 +6,25 @@ order: 3
 year: 2026
 context: personal
 role: Volledig zelf ontwikkeld
-tech: [C#, Blazor WebAssembly, .NET, Firebase, Cloud Firestore, xUnit, GitHub Actions]
+tech:
+  [
+    C#,
+    Blazor WebAssembly,
+    .NET,
+    Firebase,
+    Cloud Firestore,
+    xUnit,
+    GitHub Actions,
+  ]
 github: https://github.com/SarahMertens/Toneel-website
+demo: https://sarahmertens.github.io/Toneel-website/
+embed: true
+demoNote: Kies op het aanmeldscherm voor de demomodus. Die werkt met verzonnen gegevens die enkel in je eigen browser bewaard worden.
 ---
 
 ## Het probleem
 
-Voor de voorstelling *Er was eens … Rare Wereld!* van Toneelgroep De Ballon moesten de reservaties ergens bijgehouden worden: wie reserveerde hoeveel plaatsen voor welke voorstelling, en hoeveel plaatsen zijn er nog?
+Voor de voorstelling _Er was eens … Rare Wereld!_ van Toneelgroep De Ballon moesten de reservaties ergens bijgehouden worden: wie reserveerde hoeveel plaatsen voor welke voorstelling, en hoeveel plaatsen zijn er nog?
 
 ## Wat de app doet
 

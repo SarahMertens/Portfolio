@@ -23,7 +23,8 @@ export const ui = {
     'about.title': 'Over mij',
     'contact.title': 'Contact',
     'footer.made': 'Zelf gebouwd met Astro',
-    'projects.intro': 'Een selectie van wat ik bouwde: voor school, voor vrijwilligers en uit nieuwsgierigheid.',
+    'projects.intro':
+      'Een selectie van wat ik bouwde: voor school, voor vrijwilligers en uit nieuwsgierigheid.',
     'projects.featured': 'Uitgelichte projecten',
     'projects.more': 'Meer projecten',
     'project.back': 'Terug naar alle projecten',
@@ -38,6 +39,11 @@ export const ui = {
     'context.personal': 'Persoonlijk project',
     'context.volunteer': 'Vrijwilligerswerk',
     'context.internship': 'Stage-opdracht',
+    'demo.title': 'Probeer het zelf',
+    'demo.start': 'Start de demo',
+    'demo.newTab': 'Open in een nieuw tabblad',
+    'demo.loadNote': 'De demo laadt pas als je op de knop klikt.',
+    'demo.frameTitle': 'Live demo van',
   },
   en: {
     'site.description':
@@ -54,7 +60,8 @@ export const ui = {
     'about.title': 'About me',
     'contact.title': 'Contact',
     'footer.made': 'Built by me with Astro',
-    'projects.intro': 'A selection of what I built: for school, for volunteers and out of curiosity.',
+    'projects.intro':
+      'A selection of what I built: for school, for volunteers and out of curiosity.',
     'projects.featured': 'Featured projects',
     'projects.more': 'More projects',
     'project.back': 'Back to all projects',
@@ -69,6 +76,11 @@ export const ui = {
     'context.personal': 'Personal project',
     'context.volunteer': 'Volunteer work',
     'context.internship': 'Internship assignment',
+    'demo.title': 'Try it yourself',
+    'demo.start': 'Start the demo',
+    'demo.newTab': 'Open in a new tab',
+    'demo.loadNote': 'The demo only loads when you click the button.',
+    'demo.frameTitle': 'Live demo of',
   },
 } as const;
 
