@@ -25,7 +25,7 @@ const strengths: { title: UiKey; text: UiKey }[] = [
   <!-- Hero: wie ben ik, wat doe ik, wat zoek ik -->
   <section aria-labelledby="hero-title" class="py-12 md:py-20">
     <p class="mb-3 font-mono text-sm text-accent">{t('home.eyebrow')}</p>
-    <h1 id="hero-title" class="mb-6 text-5xl md:text-6xl">{t('home.title')}</h1>
+    <h1 id="hero-title" class="hero-title mb-6 text-5xl md:text-6xl">{t('home.title')}</h1>
     <p class="mb-6 max-w-2xl text-lg text-muted md:text-xl">{t('home.intro')}</p>
 
     <p class="mb-8 inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1 text-sm">
@@ -49,7 +49,7 @@ const strengths: { title: UiKey; text: UiKey }[] = [
     <div class="grid gap-6 md:grid-cols-3">
       {
         strengths.map(({ title, text }) => (
-          <div class="rounded-theme border border-line bg-surface p-5">
+          <div class="glass rounded-theme border border-line bg-surface p-5">
             <h3>{t(title)}</h3>
             <p class="text-muted">{t(text)}</p>
           </div>
@@ -70,7 +70,7 @@ const strengths: { title: UiKey; text: UiKey }[] = [
   </section>
 
   <!-- Afsluiter: contact -->
-  <section aria-labelledby="contact-title" class="mb-8 rounded-theme border border-line bg-surface p-8 text-center">
+  <section aria-labelledby="contact-title" class="glass mb-8 rounded-theme border border-line bg-surface p-8 text-center">
     <h2 id="contact-title">{t('home.contactTitle')}</h2>
     <p class="mx-auto mb-6 max-w-xl text-muted">{t('home.contactText')}</p>
     <a href={`mailto:${site.email}`} class="inline-block rounded-theme bg-accent px-5 py-3 font-semibold text-bg no-underline hover:opacity-90">

@@ -1,0 +1,63 @@
+---
+import { getScene, sceneAssets } from './scenes';
+
+const scene = getScene(Astro.url.pathname);
+const { creature, width, height, seabed } = sceneAssets[scene];
+
+const bubbles = Array.from({ length: 12 }, (_, i) => ({
+  x: (i * 37 + 11) % 100,
+  size: 6 + ((i * 7) % 14),
+  duration: 14 + ((i * 5) % 12),
+  delay: -((i * 3.7) % 20),
+}));
+---
+
+<div class="diving-scene" aria-hidden="true">
+  <div class="rays"></div>
+  <img class={`creature ${creature}`} src={`/themes/duiken/${creature}.svg`} alt="" width={width} height={height} />
+  <div class="snow"></div>
+  {
+    bubbles.map((b) => (
+      <span
+        class="bubble"
+        style={`--x: ${b.x}%; --size: ${b.size}px; --duration: ${b.duration}s; --delay: ${b.delay}s;`}
+      />
+    ))
+  }
+</div>
+
+<img class="seabed" src={`/themes/duiken/${seabed}.svg`} alt="" aria-hidden="true" loading="lazy" />
+
+<div class="depth-gauge" aria-hidden="true">
+  <div class="marker">
+    <img src="/themes/duiken/diver.svg" alt="" width="18" height="48" />
+    <span class="label" data-depth-label>0 m</span>
+  </div>
+  <span class="end bottom">30 m</span>
+</div>
+
+<script>
+  const MAX_DEPTH = 30;
+  const root = document.documentElement;
+  const label = document.querySelector('[data-depth-label]');
+  let scheduled = false;
+
+  function update() {
+    scheduled = false;
+    const scrollable = root.scrollHeight - window.innerHeight;
+    const depth = scrollable > 0 ? Math.min(1, window.scrollY / scrollable) : 0;
+    root.style.setProperty('--depth', depth.toFixed(3));
+    if (label) label.textContent = `${Math.round(depth * MAX_DEPTH)} m`;
+  }
+
+  function schedule() {
+    if (!scheduled) {
+      scheduled = true;
+      requestAnimationFrame(update);
+    }
+  }
+
+  window.addEventListener('scroll', schedule, { passive: true });
+  window.addEventListener('resize', schedule);
+  update();
+</script>

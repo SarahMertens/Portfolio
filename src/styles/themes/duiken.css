@@ -1,0 +1,393 @@
+@layer base {
+  :root[data-theme='duiken'] {
+    color-scheme: dark;
+
+    --color-bg: #04202e;
+    --color-surface: rgb(6 58 78 / 0.5);
+    --color-fg: #e8fdff;
+    --color-muted: #a6d6de;
+    --color-accent: #8ff7f0;
+    --color-line: rgb(160 240 245 / 0.22);
+    --color-success: #ff6fb0;
+
+    --font-heading: 'Outfit Variable', system-ui, sans-serif;
+    --radius-theme: 14px;
+  }
+
+  /* Het water: licht aan de oppervlakte, bijna zwart in de diepte.
+     Het verloop loopt over de hele pagina, dus onderaan een lange pagina is het het donkerst. */
+  :root[data-theme='duiken'] body {
+    position: relative;
+    background: linear-gradient(180deg, #0aa0a4 0%, #0a8091 8%, #0b5d72 24%, #083f57 48%, #05273a 74%, #02131e 100%);
+  }
+
+  /* Elke pagina is een andere duikplek, met een eigen kleur water */
+  :root[data-theme='duiken'][data-scene='reef'] body {
+    /* Koraalrif: ondiep, helder en groener */
+    background: linear-gradient(180deg, #2fd0b8 0%, #19a9a0 10%, #0e7f84 30%, #0a5a66 58%, #06363f 82%, #031a20 100%);
+  }
+
+  :root[data-theme='duiken'][data-scene='sand'] body {
+    /* Zandbodem: rustig, helder blauw */
+    background: linear-gradient(180deg, #2aa6d0 0%, #1a84b0 12%, #136590 34%, #0c4a6c 60%, #07304a 84%, #041d2e 100%);
+  }
+
+  :root[data-theme='duiken'][data-scene='wreck'] body {
+    /* Wrak: dieper, donkerder en grijzer blauw */
+    background: linear-gradient(180deg, #13788a 0%, #0f6274 12%, #0b4a5c 34%, #073443 60%, #04202b 84%, #021117 100%);
+  }
+
+  :root[data-theme='duiken'][data-scene='deep'] body {
+    /* De diepte: bijna geen zonlicht meer */
+    background: linear-gradient(180deg, #0a4a60 0%, #083a4d 12%, #062a3a 34%, #041c28 60%, #02101a 84%, #01070c 100%);
+  }
+
+  /* Titels: een sierlijke serif met een zachte gloed */
+  :root[data-theme='duiken'] h1 {
+    font-family: 'Fraunces Variable', Georgia, serif;
+    font-weight: 300;
+    color: #b9fbff;
+    text-shadow: 0 0 40px rgb(143 247 240 / 0.35);
+  }
+
+  /* Glazen header: je ziet het water er wazig door */
+  :root[data-theme='duiken'] .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: rgb(4 40 56 / 0.45);
+    backdrop-filter: blur(12px);
+  }
+
+  /* Glazen kaarten */
+  :root[data-theme='duiken'] .glass {
+    backdrop-filter: blur(6px);
+  }
+}
+
+/*
+  Deze regel staat bewust buiten @layer: hij moet winnen van Tailwind-classes zoals text-6xl
+  (die zitten in de laag "utilities", en regels zonder laag winnen altijd).
+*/
+
+/* De grote titel op de homepagina */
+:root[data-theme='duiken'] .hero-title {
+  font-size: clamp(3.2rem, 10vw, 7.5rem);
+  line-height: 0.95;
+  letter-spacing: -0.01em;
+}
+
+/* ---------- De decoratie (onderdeel DivingScene) ---------- */
+
+.diving-scene,
+.depth-gauge {
+  display: none;
+}
+
+:root[data-theme='duiken'] .diving-scene {
+  display: block;
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Zonnestralen die door het wateroppervlak vallen. Ze verdwijnen als je dieper gaat (--depth van 0 tot 1). */
+.diving-scene .rays {
+  position: absolute;
+  inset: -20% -10% 30% -10%;
+  background: repeating-linear-gradient(
+    105deg,
+    transparent 0 60px,
+    rgb(140 225 255 / 0.07) 60px 120px,
+    transparent 120px 210px,
+    rgb(140 225 255 / 0.04) 210px 250px
+  );
+  mask-image: linear-gradient(to bottom, black 0%, transparent 75%);
+  opacity: calc(1 - var(--depth, 0) * 1.4);
+  transform-origin: top center;
+  animation: rays-sway 14s ease-in-out infinite alternate;
+}
+
+@keyframes rays-sway {
+  from {
+    transform: skewX(-4deg) translateX(-2%);
+  }
+  to {
+    transform: skewX(4deg) translateX(2%);
+  }
+}
+
+/* "Zeesneeuw": kleine deeltjes die langzaam zweven, zoals je echt ziet onder water */
+.diving-scene .snow {
+  position: absolute;
+  inset: -100% 0 0 0;
+  background-image:
+    radial-gradient(1.5px 1.5px at 20% 30%, rgb(200 240 255 / 0.5), transparent),
+    radial-gradient(1px 1px at 70% 60%, rgb(200 240 255 / 0.4), transparent),
+    radial-gradient(1.5px 1.5px at 40% 80%, rgb(200 240 255 / 0.35), transparent),
+    radial-gradient(1px 1px at 90% 15%, rgb(200 240 255 / 0.45), transparent),
+    radial-gradient(1px 1px at 55% 45%, rgb(200 240 255 / 0.3), transparent);
+  background-size: 320px 320px;
+  animation: snow-drift 60s linear infinite;
+}
+
+@keyframes snow-drift {
+  to {
+    transform: translateY(50%);
+  }
+}
+
+/* Luchtbellen die van onder naar boven stijgen */
+.diving-scene .bubble {
+  position: absolute;
+  bottom: -40px;
+  left: var(--x);
+  width: var(--size);
+  height: var(--size);
+  border: 1px solid rgb(190 240 255 / 0.4);
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, rgb(255 255 255 / 0.35), rgb(255 255 255 / 0.03) 60%);
+  animation:
+    bubble-rise var(--duration) linear var(--delay) infinite,
+    bubble-wobble 3s ease-in-out var(--delay) infinite alternate;
+}
+
+@keyframes bubble-rise {
+  to {
+    transform: translateY(-115vh);
+  }
+}
+
+@keyframes bubble-wobble {
+  to {
+    margin-left: 14px;
+  }
+}
+
+/* Het dier van deze duikplek. Elk dier heeft een eigen plek en beweging. */
+.diving-scene .creature {
+  position: absolute;
+  height: auto;
+}
+
+/* Open water (home): de walvishaai zweeft traag rechts en blijft wat achter als je dieper gaat */
+.diving-scene .whale-shark {
+  top: 26vh;
+  right: -8vw;
+  width: min(60vw, 900px);
+  opacity: 0.8;
+  transform: translateY(calc(var(--depth, 0) * -30vh)) rotate(-18deg);
+  animation: shark-glide 22s ease-in-out infinite alternate;
+}
+
+@keyframes shark-glide {
+  from {
+    translate: 0 0;
+  }
+  to {
+    translate: -4vw 3vh;
+  }
+}
+
+/* Koraalrif (projecten): een school visjes die rondjes zwemt */
+.diving-scene .school {
+  top: 18vh;
+  right: -6vw;
+  width: min(48vw, 720px);
+  opacity: 0.75;
+  transform: translateY(calc(var(--depth, 0) * -20vh));
+  animation: school-circle 80s linear infinite;
+}
+
+@keyframes school-circle {
+  to {
+    rotate: 360deg;
+  }
+}
+
+/* Zandbodem (projectdetail): een kwal die op en neer deint */
+.diving-scene .jellyfish {
+  top: 16vh;
+  right: 6vw;
+  width: min(16vw, 230px);
+  opacity: 0.8;
+  transform: translateY(calc(var(--depth, 0) * -25vh));
+  animation: jelly-pulse 7s ease-in-out infinite alternate;
+}
+
+@keyframes jelly-pulse {
+  from {
+    translate: 0 0;
+    scale: 1 1;
+  }
+  to {
+    translate: -1vw 6vh;
+    scale: 1.04 0.95;
+  }
+}
+
+/* Wrak (over mij): een zeeschildpad die schuin naar boven zwemt */
+.diving-scene .turtle {
+  top: 52vh;
+  right: -5vw;
+  width: min(30vw, 440px);
+  opacity: 0.75;
+  transform: translateY(calc(var(--depth, 0) * -25vh)) rotate(30deg);
+  animation: turtle-swim 26s ease-in-out infinite alternate;
+}
+
+@keyframes turtle-swim {
+  from {
+    translate: 0 0;
+  }
+  to {
+    translate: -5vw -4vh;
+  }
+}
+
+/* De diepte (contact): een manta die boven je voorbij glijdt */
+.diving-scene .manta {
+  top: -4vh;
+  right: 8vw;
+  width: min(40vw, 580px);
+  opacity: 0.5;
+  transform: translateY(calc(var(--depth, 0) * -20vh)) rotate(-8deg);
+  animation: manta-glide 18s ease-in-out infinite alternate;
+}
+
+@keyframes manta-glide {
+  from {
+    translate: 0 0;
+    scale: 1;
+  }
+  to {
+    translate: -8vw 2vh;
+    scale: 1.04 0.97;
+  }
+}
+
+/* Op een smal scherm staan de dieren achter de tekst, dus daar zijn ze zachter */
+@media (max-width: 900px) {
+  .diving-scene .creature {
+    opacity: 0.3;
+  }
+
+  .diving-scene .whale-shark {
+    width: 80vw;
+    top: 40vh;
+  }
+
+  .diving-scene .school,
+  .diving-scene .manta {
+    width: 80vw;
+  }
+
+  .diving-scene .turtle {
+    width: 60vw;
+  }
+
+  .diving-scene .jellyfish {
+    width: 30vw;
+  }
+}
+
+/* De zeebodem met rotsen en roze zeewier: achtergrond onderaan de pagina, achter de inhoud */
+.seabed {
+  display: none;
+}
+
+:root[data-theme='duiken'] .seabed {
+  display: block;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+  width: 100%;
+  height: 400px;
+  object-fit: cover;
+  object-position: bottom center;
+  pointer-events: none;
+}
+
+/* De dieptemeter rechts: van 0 tot 30 meter, de maximale diepte van een 2-sterduiker */
+:root[data-theme='duiken'] .depth-gauge {
+  position: fixed;
+  top: 22vh;
+  right: 22px;
+  z-index: 30;
+  display: none;
+  height: 56vh;
+  width: 2px;
+  pointer-events: none;
+  background: repeating-linear-gradient(to bottom, rgb(140 210 240 / 0.5) 0 1px, transparent 1px calc(100% / 6));
+}
+
+@media (min-width: 1100px) {
+  :root[data-theme='duiken'] .depth-gauge {
+    display: block;
+  }
+}
+
+.depth-gauge::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgb(143 247 240 / 0.6), rgb(143 247 240 / 0.1));
+}
+
+/* De wijzer is een kleine duiker die mee naar beneden zwemt */
+.depth-gauge .marker {
+  position: absolute;
+  top: calc(var(--depth, 0) * 100%);
+  left: 50%;
+  width: 18px;
+  height: 48px;
+  transform: translate(-50%, -50%);
+}
+
+.depth-gauge .marker img {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 4px rgb(220 250 255 / 0.6));
+}
+
+.depth-gauge .label {
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--color-accent);
+  white-space: nowrap;
+  transform: translateY(-50%);
+}
+
+.depth-gauge .end {
+  position: absolute;
+  right: 18px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--color-muted);
+  white-space: nowrap;
+  transform: translateY(-50%);
+}
+
+.depth-gauge .end.bottom {
+  top: 100%;
+  /* Verdwijnt als de meter zelf onderaan komt, anders staan er twee keer "30 m" */
+  opacity: calc((0.93 - var(--depth, 0)) * 20);
+}
+
+/* Wie in zijn systeem "minder beweging" vraagt, krijgt een stilstaande zee */
+@media (prefers-reduced-motion: reduce) {
+  .diving-scene * {
+    animation: none !important;
+  }
+
+  .diving-scene .bubble {
+    display: none;
+  }
+}

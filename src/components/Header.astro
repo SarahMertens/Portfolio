@@ -22,7 +22,7 @@ const otherLang: Lang = lang === 'nl' ? 'en' : 'nl';
 const otherLangHref = switchLangPath(Astro.url.pathname, otherLang);
 ---
 
-<header class="flex items-center gap-8 border-b border-line p-4">
+<header class="site-header flex items-center gap-4 border-b border-line p-4 md:gap-8">
   <a class="font-mono text-xl font-bold text-fg no-underline" href={`/${lang}/`}>SM</a>
 
   <nav class="flex-1" aria-label={t('nav.label')}>
