@@ -19,7 +19,8 @@ const { lang, title, description } = Astro.props;
 const t = useTranslations(lang);
 const scene = getScene(Astro.url.pathname);
 
-const pageTitle = `${title} | Sarah Mertens`;
+const isHome = scene === 'open';
+const pageTitle = isHome ? `Sarah Mertens · ${title}` : `${title} | Sarah Mertens`;
 const pageDescription = description ?? t('site.description');
 const alternates = (Object.keys(languages) as Lang[]).map((l) => ({
   lang: l,
@@ -32,18 +33,23 @@ const alternates = (Object.keys(languages) as Lang[]).map((l) => ({
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Het icoontje in het tabblad: elk thema heeft een eigen kleur -->
+    <link rel="icon" type="image/svg+xml" href={`/favicon-${defaultTheme}.svg`} data-favicon />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <!-- Het gekozen thema meteen zetten, nog voor de pagina getekend wordt (anders flitst het standaardthema) -->
     <script is:inline define:vars={{ themeIds: themes.map((theme) => theme.id) }}>
       try {
         const saved = localStorage.getItem('theme');
-        if (saved && themeIds.includes(saved)) document.documentElement.dataset.theme = saved;
+        if (saved && themeIds.includes(saved)) {
+          document.documentElement.dataset.theme = saved;
+          document.querySelector('link[data-favicon]').href = `/favicon-${saved}.svg`;
+        }
       } catch {
         // Geen localStorage (bv. privévenster met strenge instellingen): standaardthema blijft
       }
     </script>
     <title>{pageTitle}</title>
     <meta name="description" content={pageDescription} />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     {alternates.map((a) => <link rel="alternate" hreflang={a.lang} href={a.href} />)}
     <slot name="head" />
   </head>

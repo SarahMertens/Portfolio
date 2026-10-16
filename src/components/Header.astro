@@ -93,6 +93,7 @@ const otherLangHref = switchLangPath(Astro.url.pathname, otherLang);
       const theme = button.dataset.themeChoice;
       if (!theme) return;
       root.dataset.theme = theme;
+      document.querySelector<HTMLLinkElement>('link[data-favicon]')?.setAttribute('href', `/favicon-${theme}.svg`);
       try {
         localStorage.setItem('theme', theme);
       } catch {
