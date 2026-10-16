@@ -4,6 +4,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import DivingScene from '../components/themes/DivingScene.astro';
 import GuitarScene from '../components/themes/GuitarScene.astro';
+import ControlScene from '../components/themes/ControlScene.astro';
 import { getScene } from '../components/themes/scenes';
 import { defaultTheme, themes } from '../themes';
 import { languages, switchLangPath, useTranslations, type Lang } from '../i18n/ui';
@@ -49,6 +50,7 @@ const alternates = (Object.keys(languages) as Lang[]).map((l) => ({
   <body class="flex min-h-screen flex-col">
     <DivingScene />
     <GuitarScene lang={lang} />
+    <ControlScene lang={lang} />
     <a
       href="#main"
       class="sr-only rounded-theme bg-fg px-4 py-2 text-bg focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50"

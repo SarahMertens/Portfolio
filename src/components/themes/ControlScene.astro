@@ -1,0 +1,167 @@
+---
+import { getScene, type Scene } from './scenes';
+import { useTranslations, type Lang } from '../../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const t = useTranslations(Astro.props.lang);
+const scene = getScene(Astro.url.pathname);
+
+// Welke camera hoort bij welke pagina
+const cams: Record<Scene, string> = { open: '01', reef: '02', sand: '06', wreck: '07', deep: '08' };
+const quad = ['02', '03', '04', '05'];
+const bars = Array.from({ length: 14 }, (_, i) => ({ d: (0.5 + ((i * 37) % 9) / 10).toFixed(2), delay: (-((i * 0.13) % 1)).toFixed(2) }));
+---
+
+<!-- Het beeld zelf: korrel, beeldlijnen, een rollende band en donkere hoeken -->
+<div class="cctv-screen" aria-hidden="true">
+  <div class="noise"></div>
+  <div class="scanlines"></div>
+  <div class="rollbar"></div>
+  <div class="vignette"></div>
+</div>
+<!-- Bij het laden: een flits van ruis, alsof je naar een andere camera schakelt -->
+<div class="cctv-static" aria-hidden="true"></div>
+
+<!-- Monitorwand (projecten): het scherm in vier camerabeelden -->
+<div class="cctv-quad" aria-hidden="true">
+  {quad.map((cam) => <span class="quad-label"><span class="live">●</span> CAM {cam}</span>)}
+</div>
+
+<!-- De tekst op het beeld en de camera -->
+<div class="cctv-hud" aria-hidden="true">
+  <p class="osd osd-cam">CAM {scene === 'reef' ? '02–05' : cams[scene]}<br />{t(`control.${scene}`)}</p>
+  <p class="osd osd-time" data-osd-time>--</p>
+  <p class="osd osd-ptz" data-osd-ptz>PAN 0° TILT 0°</p>
+
+  <!-- Inkom (home): de camera merkt je op en laat je binnen -->
+  <p class="osd osd-notice" data-notice>
+    <span class="detect">{t('control.motion')}</span>
+    <span class="granted">{t('control.visitor')} #<span data-visitor>0001</span><br />✓ {t('control.access')}</span>
+  </p>
+
+  <div class="camera">
+    <svg viewBox="0 0 160 110">
+      <rect x="128" y="8" width="26" height="44" rx="3" fill="#2a3138" />
+      <rect x="112" y="24" width="24" height="10" fill="#3a434c" />
+      <g class="cam-head" data-cam-head>
+        <rect x="20" y="20" width="96" height="34" rx="8" fill="#d9dee3" />
+        <rect x="14" y="14" width="104" height="10" rx="4" fill="#b7bec5" />
+        <rect x="8" y="24" width="18" height="26" rx="4" fill="#20262c" />
+        <circle cx="12" cy="37" r="7" fill="#0b1014" />
+        <circle cx="10" cy="35" r="2.5" fill="#6fa8ff" opacity="0.8" />
+        <!-- Infraroodlampjes rond de lens, enkel bij nachtzicht -->
+        <g class="ir-ring">
+          {[0, 60, 120, 180, 240, 300].map((a) => (
+            <circle cx={12 + Math.cos((a * Math.PI) / 180) * 10.5} cy={37 + Math.sin((a * Math.PI) / 180) * 10.5} r="1.6" />
+          ))}
+        </g>
+        <circle class="rec-led" cx="100" cy="46" r="3" fill="#ff3b3b" />
+      </g>
+    </svg>
+    <p class="osd rec">
+      <span class="rec-text"><span class="dot">●</span> REC</span>
+      <span class="play-text">▶ PLAY</span>
+      <span class="ir-text">IR ●</span>
+    </p>
+  </div>
+
+  <!-- Opname (projectdetail): scrollen = door de opname spoelen -->
+  <div class="playback">
+    <span>◀◀</span>
+    <span class="bar"><span class="fill"></span><span class="head"></span></span>
+    <span data-playback-time>00:00:00</span>
+    <span>▶▶</span>
+  </div>
+
+  <!-- Meldkamer (contact): een portofoon die oplicht als je het formulier invult -->
+  <div class="radio">
+    <span class="channel">{t('control.channel')} · 446.006 MHz</span>
+    <span class="wave">{bars.map((b) => <span style={`--d: ${b.d}s; --delay: ${b.delay}s`} />)}</span>
+    <span class="status standby">{t('control.standby')}</span>
+    <span class="status connected">{t('control.connected')}</span>
+  </div>
+</div>
+
+<script>
+  const root = document.documentElement;
+  const time = document.querySelector('[data-osd-time]');
+  const ptz = document.querySelector('[data-osd-ptz]');
+  const head = document.querySelector<SVGGElement>('[data-cam-head]');
+  const playback = document.querySelector('[data-playback-time]');
+  const notice = document.querySelector<HTMLElement>('[data-notice]');
+  const visitor = document.querySelector('[data-visitor]');
+  const p2 = (n: number) => String(n).padStart(2, '0');
+
+  // ---------- De klok rechtsonder ----------
+  function tick() {
+    const d = new Date();
+    if (time) time.textContent = `${p2(d.getDate())}-${p2(d.getMonth() + 1)}-${d.getFullYear()}  ${p2(d.getHours())}:${p2(d.getMinutes())}:${p2(d.getSeconds())}`;
+  }
+  tick();
+  setInterval(tick, 1000);
+
+  // ---------- Scrollen: de camera kantelt, en bij een opname spoel je door de video ----------
+  let pan = 0;
+  function scrollPart() {
+    const scrollable = root.scrollHeight - window.innerHeight;
+    return scrollable > 0 ? Math.min(1, window.scrollY / scrollable) : 0;
+  }
+  function updateHud() {
+    const p = scrollPart();
+    if (ptz) ptz.textContent = `PAN ${Math.round(pan)}°  TILT ${Math.round(-p * 45)}°`;
+    const seconds = Math.round(p * 240); // de "opname" duurt 4 minuten
+    if (playback) playback.textContent = `00:${p2(Math.floor(seconds / 60))}:${p2(seconds % 60)}`;
+  }
+
+  // ---------- De camera kijkt naar je muis ----------
+  function aim(x: number, y: number) {
+    if (!head?.ownerSVGElement) return;
+    const box = head.ownerSVGElement.getBoundingClientRect();
+    const px = box.left + box.width * 0.75;
+    const py = box.top + box.height * 0.34;
+    const angle = (Math.atan2(y - py, x - px) * 180) / Math.PI; // 180 = recht naar links
+    pan = Math.max(-35, Math.min(70, angle >= 0 ? 180 - angle : -180 - angle));
+    head.style.transform = `rotate(${-pan}deg)`;
+    updateHud();
+  }
+
+  // ---------- Inkom: de eerste beweging wordt "gedetecteerd", daarna krijg je toegang ----------
+  // Eén keer per pagina, een paar seconden, in de hoek: het zit nergens in de weg.
+  let noticed = false;
+  function detect() {
+    if (noticed || !notice) return;
+    noticed = true;
+    if (visitor) visitor.textContent = String(Math.floor(Math.random() * 9000) + 1000);
+    notice.classList.add('detect');
+    setTimeout(() => notice.classList.replace('detect', 'granted'), 1800);
+    setTimeout(() => notice.classList.remove('granted'), 6000);
+  }
+  // Op een gsm is er geen muis: dan na een seconde vanzelf
+  setTimeout(detect, matchMedia('(pointer: fine)').matches ? 8000 : 1000);
+
+  window.addEventListener(
+    'pointermove',
+    (e) => {
+      if (e.pointerType !== 'mouse') return;
+      aim(e.clientX, e.clientY);
+      detect();
+    },
+    { passive: true },
+  );
+
+  // ---------- Meldkamer: de portofoon "zendt" terwijl je het formulier invult ----------
+  const form = document.querySelector('main form');
+  form?.addEventListener('focusin', () => root.classList.add('transmitting'));
+  form?.addEventListener('focusout', () => {
+    // even wachten: misschien ga je gewoon naar het volgende veld
+    setTimeout(() => {
+      if (!form.contains(document.activeElement)) root.classList.remove('transmitting');
+    }, 50);
+  });
+
+  window.addEventListener('scroll', () => requestAnimationFrame(updateHud), { passive: true });
+  updateHud();
+</script>

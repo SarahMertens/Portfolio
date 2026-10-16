@@ -1,0 +1,571 @@
+@layer base {
+  :root[data-theme='controle'] {
+    color-scheme: dark;
+
+    --color-bg: #0d1115;
+    --color-surface: #11171c;
+    --color-fg: #e4ebf0;
+    --color-muted: #93a3ae;
+    --color-accent: #ffb000;
+    --color-line: rgb(170 190 205 / 0.2);
+    --color-success: #ff3b3b;
+
+    --font-heading: 'VT323', ui-monospace, monospace;
+    --radius-theme: 6px;
+
+    /* Kleur van de tekst op het camerabeeld (verandert per pagina) */
+    --osd: #e9eff3;
+    --osd-glow: rgb(220 235 245 / 0.5);
+  }
+
+  :root[data-theme='controle'] body {
+    position: relative;
+    background:
+      radial-gradient(ellipse at 50% 0%, #1a232b, transparent 60%),
+      #0d1115;
+    counter-reset: cam;
+  }
+
+  :root[data-theme='controle'] h1,
+  :root[data-theme='controle'] h2,
+  :root[data-theme='controle'] h3 {
+    font-weight: 400;
+    letter-spacing: 0.02em;
+  }
+
+  :root[data-theme='controle'] h2 {
+    font-size: 2.2rem;
+  }
+
+  :root[data-theme='controle'] h3 {
+    font-size: 1.7rem;
+  }
+
+  /* Titels met een lichte gloed en kleurrandjes, zoals op een oude monitor */
+  :root[data-theme='controle'] h1 {
+    color: #f2f6f8;
+    text-shadow:
+      0 0 12px rgb(220 235 245 / 0.35),
+      2px 0 0 rgb(255 60 60 / 0.25),
+      -2px 0 0 rgb(80 160 255 / 0.25);
+  }
+
+  :root[data-theme='controle'] .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: rgb(13 17 21 / 0.85);
+    backdrop-filter: blur(6px);
+  }
+
+  /* Kaarten als monitoren in de muur, elk met een cameranummer erboven */
+  :root[data-theme='controle'] .glass {
+    position: relative;
+    counter-increment: cam;
+    border-color: #2b343c;
+    background:
+      repeating-linear-gradient(0deg, rgb(255 255 255 / 0.025) 0 1px, transparent 1px 3px),
+      radial-gradient(ellipse at 50% 40%, #18222a, #0e1418);
+    box-shadow:
+      0 0 0 6px #1a1f24,
+      0 0 0 7px #2b343c,
+      inset 0 0 40px rgb(120 170 200 / 0.08);
+  }
+
+  :root[data-theme='controle'] .glass::before {
+    content: 'CAM ' counter(cam, decimal-leading-zero);
+    position: absolute;
+    top: -22px;
+    left: -2px;
+    font-family: 'VT323', monospace;
+    font-size: 16px;
+    color: #c9d4db;
+    opacity: 0.7;
+  }
+}
+
+/* Buiten @layer, zodat hij wint van de Tailwind-classes op de titel */
+:root[data-theme='controle'] .hero-title {
+  font-size: clamp(3.6rem, 11vw, 8.5rem);
+  line-height: 0.85;
+}
+
+/* ---------- Decoratie: standaard verborgen ---------- */
+.cctv-screen,
+.cctv-static,
+.cctv-quad,
+.cctv-hud {
+  display: none;
+}
+
+/* ---------- Het camerabeeld ---------- */
+:root[data-theme='controle'] .cctv-screen {
+  display: block;
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.cctv-screen .noise {
+  position: absolute;
+  inset: -50%;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.95' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grain 0.5s steps(4) infinite;
+}
+
+@keyframes grain {
+  25% {
+    translate: -3% 2%;
+  }
+  50% {
+    translate: 2% -3%;
+  }
+  75% {
+    translate: -2% -1%;
+  }
+}
+
+.cctv-screen .scanlines {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(0deg, rgb(0 0 0 / 0.18) 0 1px, transparent 1px 3px);
+}
+
+/* Een lichtere band die traag over het beeld rolt */
+.cctv-screen .rollbar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -20vh;
+  height: 18vh;
+  background: linear-gradient(transparent, rgb(200 220 235 / 0.05), transparent);
+  animation: roll 7s linear infinite;
+}
+
+@keyframes roll {
+  to {
+    translate: 0 140vh;
+  }
+}
+
+.cctv-screen .vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 55%, rgb(0 0 0 / 0.55));
+}
+
+/* Bij elke nieuwe pagina: een korte flits van ruis, alsof je naar een andere camera schakelt */
+:root[data-theme='controle'] .cctv-static {
+  display: block;
+  position: fixed;
+  inset: -50%;
+  z-index: 60;
+  pointer-events: none;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='1' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E"),
+    #1a2026;
+  animation:
+    static-off 0.55s ease-out forwards,
+    grain 0.12s steps(3) infinite;
+}
+
+@keyframes static-off {
+  0% {
+    opacity: 1;
+  }
+  60% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+/* ---------- Tekst op het beeld en de camera ---------- */
+@media (min-width: 1200px) {
+  :root[data-theme='controle'] .cctv-hud {
+    display: block;
+  }
+
+  /* Een donkere strook onder de footer, zodat de tekst op het beeld niet over de footer valt */
+  :root[data-theme='controle'] body {
+    padding-bottom: 48px;
+  }
+}
+
+.cctv-hud .osd {
+  position: fixed;
+  z-index: 30;
+  margin: 0;
+  font-family: 'VT323', monospace;
+  font-size: 20px;
+  line-height: 1;
+  color: var(--osd);
+  text-shadow: 0 0 6px var(--osd-glow);
+  pointer-events: none;
+}
+
+.cctv-hud .osd-cam {
+  top: 96px;
+  left: 24px;
+}
+
+.cctv-hud .osd-time {
+  right: 24px;
+  bottom: 18px;
+  white-space: pre;
+}
+
+.cctv-hud .osd-ptz {
+  left: 24px;
+  bottom: 18px;
+  font-size: 16px;
+  opacity: 0.75;
+}
+
+/* De bewakingscamera rechtsboven: kijkt naar je muis */
+.cctv-hud .camera {
+  position: fixed;
+  top: 86px;
+  right: 18px;
+  z-index: 30;
+  width: 150px;
+  pointer-events: none;
+}
+
+.cctv-hud .camera svg {
+  width: 100%;
+  overflow: visible;
+  filter: drop-shadow(0 6px 10px rgb(0 0 0 / 0.5));
+}
+
+.cctv-hud .cam-head {
+  transform-box: view-box;
+  transform-origin: 120px 37px;
+  transition: transform 0.35s ease-out;
+}
+
+.cctv-hud .rec {
+  position: static;
+  margin: 2px 0 0;
+  padding-right: 8px;
+  text-align: right;
+  color: #ff3b3b;
+  text-shadow: 0 0 6px rgb(255 59 59 / 0.6);
+}
+
+.cctv-hud .rec-led,
+.cctv-hud .rec .dot {
+  animation: blink 1.2s steps(1) infinite;
+}
+
+.cctv-hud .play-text,
+.cctv-hud .ir-text,
+.cctv-hud .ir-ring {
+  display: none;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* ---------- Inkom (home): een melding in de hoek bij de eerste beweging ---------- */
+.cctv-hud .osd-notice {
+  top: 150px;
+  left: 24px;
+  max-width: 130px;
+  font-size: 17px;
+  line-height: 1.05;
+}
+
+.osd-notice .detect,
+.osd-notice .granted {
+  display: none;
+}
+
+:root[data-scene='open'] .osd-notice.detect .detect {
+  display: inline;
+  padding: 1px 4px;
+  background: #ff3b3b;
+  color: #0d1115;
+  text-shadow: none;
+  animation: blink 0.5s steps(1) infinite;
+}
+
+:root[data-scene='open'] .osd-notice.granted .granted {
+  display: inline;
+  color: #3ddc84;
+  text-shadow: 0 0 6px rgb(61 220 132 / 0.5);
+}
+
+/* ---------- Monitorwand (projecten): vier camerabeelden ---------- */
+:root[data-theme='controle'][data-scene='reef'] .cctv-quad {
+  display: grid;
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  grid-template: 1fr 1fr / 1fr 1fr;
+  pointer-events: none;
+  /* De lijnen tussen de vier beelden */
+  background:
+    linear-gradient(rgb(170 190 205 / 0.25), rgb(170 190 205 / 0.25)) center / 2px 100% no-repeat,
+    linear-gradient(rgb(170 190 205 / 0.25), rgb(170 190 205 / 0.25)) center / 100% 2px no-repeat;
+}
+
+.cctv-quad .quad-label {
+  align-self: end;
+  justify-self: start;
+  margin: 0 0 56px 24px;
+  font-family: 'VT323', monospace;
+  font-size: 18px;
+  color: var(--osd);
+  opacity: 0.6;
+}
+
+.cctv-quad .quad-label:nth-child(-n + 2) {
+  align-self: start;
+  margin: 170px 0 0 24px;
+}
+
+.cctv-quad .quad-label:nth-child(even) {
+  justify-self: end;
+  margin-right: 190px;
+}
+
+.cctv-quad .live {
+  color: #3ddc84;
+  animation: blink 1.6s steps(1) infinite;
+}
+
+/* ---------- Opname (projectdetail): gele tekst en een afspeelbalk ---------- */
+@layer base {
+  :root[data-theme='controle'][data-scene='sand'] {
+    --osd: #ffd23f;
+    --osd-glow: rgb(255 210 63 / 0.5);
+  }
+}
+
+:root[data-scene='sand'] .cctv-hud .rec-text {
+  display: none;
+}
+
+:root[data-scene='sand'] .cctv-hud .play-text {
+  display: inline;
+  color: #ffd23f;
+  text-shadow: 0 0 6px rgb(255 210 63 / 0.6);
+}
+
+.cctv-hud .playback,
+.cctv-hud .radio {
+  display: none;
+}
+
+:root[data-scene='sand'] .cctv-hud .playback {
+  display: flex;
+  position: fixed;
+  left: 50%;
+  bottom: 14px;
+  z-index: 30;
+  align-items: center;
+  gap: 12px;
+  width: min(520px, 50vw);
+  padding: 6px 12px;
+  border: 1px solid rgb(255 210 63 / 0.4);
+  background: rgb(13 17 21 / 0.8);
+  color: #ffd23f;
+  font-family: 'VT323', monospace;
+  font-size: 18px;
+  translate: -50% 0;
+}
+
+.playback .bar {
+  position: relative;
+  flex: 1;
+  height: 4px;
+  background: rgb(255 210 63 / 0.25);
+}
+
+.playback .fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: calc(var(--depth, 0) * 100%);
+  background: #ffd23f;
+}
+
+.playback .head {
+  position: absolute;
+  top: 50%;
+  left: calc(var(--depth, 0) * 100%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #ffd23f;
+  translate: -50% -50%;
+}
+
+/* ---------- Nachtzicht (over mij): groenig beeld en infraroodlampjes ---------- */
+@layer base {
+  :root[data-theme='controle'][data-scene='wreck'] {
+    --color-bg: #08100a;
+    --color-surface: #0c160f;
+    --color-fg: #dcf5e1;
+    --color-muted: #8fb79a;
+    --color-accent: #9dff8a;
+    --color-line: rgb(150 230 160 / 0.22);
+    --osd: #c8ffd0;
+    --osd-glow: rgb(160 255 170 / 0.5);
+  }
+
+  :root[data-theme='controle'][data-scene='wreck'] body {
+    background:
+      radial-gradient(ellipse at 50% 30%, #13261a, transparent 65%),
+      #08100a;
+  }
+
+  :root[data-theme='controle'][data-scene='wreck'] h1 {
+    color: #dcffe2;
+    text-shadow: 0 0 14px rgb(140 255 160 / 0.45);
+  }
+
+  :root[data-theme='controle'][data-scene='wreck'] .glass {
+    border-color: #23402b;
+    background:
+      repeating-linear-gradient(0deg, rgb(160 255 170 / 0.03) 0 1px, transparent 1px 3px),
+      radial-gradient(ellipse at 50% 40%, #12241a, #0a140d);
+    box-shadow:
+      0 0 0 6px #141d17,
+      0 0 0 7px #23402b,
+      inset 0 0 40px rgb(140 255 160 / 0.07);
+  }
+
+  :root[data-theme='controle'][data-scene='wreck'] .glass::before {
+    color: #b9f5c3;
+  }
+}
+
+/* Het beeld wordt korreliger en groener, zoals een infraroodcamera in het donker */
+:root[data-scene='wreck'] .cctv-screen .noise {
+  filter: sepia(1) hue-rotate(70deg) saturate(3) brightness(1.4);
+}
+
+:root[data-scene='wreck'] .cctv-screen .vignette {
+  background: radial-gradient(ellipse at center, transparent 45%, rgb(0 0 0 / 0.7));
+}
+
+:root[data-scene='wreck'] .cctv-hud .rec-text {
+  display: none;
+}
+
+:root[data-scene='wreck'] .cctv-hud .ir-text {
+  display: inline;
+  color: #ff5b5b;
+}
+
+:root[data-scene='wreck'] .cctv-hud .ir-ring {
+  display: inline;
+  fill: #ff4040;
+  filter: drop-shadow(0 0 2px #ff4040);
+  animation: ir-glow 2.4s ease-in-out infinite alternate;
+}
+
+@keyframes ir-glow {
+  from {
+    opacity: 0.55;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ---------- Meldkamer (contact en bedankt): een portofoon ---------- */
+@layer base {
+  :root[data-theme='controle'][data-scene='deep'] {
+    --osd: #ffcf70;
+    --osd-glow: rgb(255 176 0 / 0.45);
+  }
+}
+
+:root[data-scene='deep'] .cctv-hud .radio {
+  display: flex;
+  position: fixed;
+  left: 50%;
+  bottom: 14px;
+  z-index: 30;
+  align-items: center;
+  gap: 14px;
+  padding: 6px 14px;
+  border: 1px solid rgb(255 176 0 / 0.35);
+  border-radius: 4px;
+  background: rgb(13 17 21 / 0.85);
+  color: #ffcf70;
+  font-family: 'VT323', monospace;
+  font-size: 18px;
+  translate: -50% 0;
+}
+
+.radio .wave {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  height: 22px;
+}
+
+.radio .wave span {
+  width: 3px;
+  height: 4px;
+  background: #ffb000;
+  transition: height 0.2s;
+}
+
+.radio .status.connected {
+  display: none;
+  color: #3ddc84;
+}
+
+.radio .status.standby {
+  animation: blink 1.4s steps(1) infinite;
+}
+
+/* Als je het formulier invult, gaat de portofoon "zenden" */
+:root.transmitting .radio .wave span {
+  animation: wave var(--d) ease-in-out var(--delay) infinite alternate;
+}
+
+:root.transmitting .radio .status.standby {
+  display: none;
+}
+
+:root.transmitting .radio .status.connected {
+  display: inline;
+}
+
+@keyframes wave {
+  from {
+    height: 3px;
+  }
+  to {
+    height: 22px;
+  }
+}
+
+/* Wie in zijn systeem "minder beweging" vraagt, krijgt een stilstaand beeld */
+@media (prefers-reduced-motion: reduce) {
+  .cctv-screen *,
+  .cctv-hud *,
+  .cctv-quad * {
+    animation: none !important;
+  }
+
+  .cctv-static {
+    display: none !important;
+  }
+
+  .cctv-hud .cam-head {
+    transition: none;
+  }
+}

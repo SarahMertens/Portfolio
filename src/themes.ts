@@ -4,6 +4,7 @@ import type { Lang } from './i18n/ui';
 export const themes = [
   { id: 'duiken', icon: '🤿', label: { nl: 'Duiken', en: 'Diving' } },
   { id: 'muziek', icon: '🎸', label: { nl: 'Muziek', en: 'Music' } },
+  { id: 'controle', icon: '📹', label: { nl: 'Controlekamer', en: 'Control room' } },
 ] as const satisfies readonly { id: string; icon: string; label: Record<Lang, string> }[];
 
 export type ThemeId = (typeof themes)[number]['id'];
