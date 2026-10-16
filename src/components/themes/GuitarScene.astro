@@ -1,0 +1,253 @@
+---
+import { useTranslations, type Lang } from '../../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const t = useTranslations(Astro.props.lang);
+const fretTop = (n: number) => ((1 - 2 ** (-n / 12)) / (1 - 2 ** -1)) * 100;
+const frets = Array.from({ length: 12 }, (_, i) => fretTop(i + 1));
+const fretMid = (n: number) => (fretTop(n) + fretTop(n - 1)) / 2;
+const inlays = [3, 5, 7, 9];
+
+const neckFrets = [0, 22, 42, 60, 76, 90];
+
+const strings = [
+  { note: 'E', freq: 82.41 },
+  { note: 'A', freq: 110.0 },
+  { note: 'D', freq: 146.83 },
+  { note: 'G', freq: 196.0 },
+  { note: 'B', freq: 246.94 },
+  { note: 'E', freq: 329.63 },
+];
+
+const notes = Array.from({ length: 10 }, (_, i) => ({
+  x: (i * 41 + 7) % 100,
+  size: 20 + ((i * 7) % 16),
+  duration: 16 + ((i * 5) % 12),
+  delay: -((i * 3.3) % 22),
+  kind: i % 3,
+  tone: i % 4,
+}));
+---
+
+<div class="guitar-body" aria-hidden="true">
+  <div class="neck-end">
+    {neckFrets.map((top) => <span class="fret" style={`top: ${top}%`} />)}
+  </div>
+  <div class="soundhole">
+    <div class="rosette"></div>
+    <div class="rings" data-rings></div>
+  </div>
+  <div class="strings">
+    {strings.map((s, i) => <span class="string" data-string={i} data-freq={s.freq} title={s.note} />)}
+  </div>
+  <div class="bridge">
+    <div class="saddle"></div>
+    <div class="pins">{strings.map(() => <span />)}</div>
+  </div>
+  <!-- Over mij: de achterkant van de gitaar, met een ingelegde middenstrook -->
+  <div class="backstrip"></div>
+  <!-- Contact: de gitaarkoffer, met plectrums en een capo in de lege holte -->
+  <img class="case" src="/themes/muziek/case.svg" alt="" width="600" height="1400" loading="lazy" />
+</div>
+
+<!-- Het labeltje aan de snaren: legt uit dat je één keer moet tikken, en slaat zelf ook alle snaren aan -->
+<button type="button" class="guitar-tag" data-guitar-tag aria-label={t('guitar.strum')}>
+  <span class="cord" aria-hidden="true"></span>
+  <span class="tag-card" aria-hidden="true">
+    <span data-tag-text="first">
+      {t('guitar.first')} <span class="arrow">↗</span><br />
+      <small>{t('guitar.then')} ♪</small>
+    </span>
+    <span data-tag-text="again" hidden>{t('guitar.again')} ♪</span>
+    <span data-tag-text="play" hidden>{t('guitar.play')} ♫</span>
+  </span>
+</button>
+
+<div class="guitar-air" aria-hidden="true">
+  <div class="light"></div>
+  <div class="motes"></div>
+  {
+    notes.map((n) => (
+      <svg
+        class={`note tone-${n.tone}`}
+        style={`--x: ${n.x}%; --size: ${n.size}px; --duration: ${n.duration}s; --delay: ${n.delay}s;`}
+        viewBox="0 0 24 32"
+      >
+        {n.kind === 0 && <path d="M13 3v19.5a5 3.8 0 1 1-2-3V3h2zm0 0c4 1 7 4 7 9-1.5-2.5-4-4-7-4.5z" />}
+        {n.kind === 1 && <path d="M7 6l14-3v19.5a4.5 3.4 0 1 1-2-3V8.5L9 10.6v14a4.5 3.4 0 1 1-2-3z" />}
+        {n.kind === 2 && <path d="M14 2v20.5a5 3.8 0 1 1-2-3V2h2z" />}
+      </svg>
+    ))
+  }
+</div>
+
+<div class="fretboard" aria-hidden="true">
+  {frets.map((top) => <span class="fret" style={`top: ${top}%`} />)}
+  {inlays.map((n) => <span class="inlay" style={`top: ${fretMid(n)}%`} />)}
+  <span class="inlay double" style={`top: ${fretMid(12)}%`} />
+  <span class="pick">
+    <svg viewBox="0 0 24 26"><path d="M12 1C20 1 23.5 5 22.5 9.5 21 16 15 23 12 25 9 23 3 16 1.5 9.5.5 5 4 1 12 1z" /></svg>
+    <span class="label" data-fret-label>open</span>
+  </span>
+</div>
+
+<script>
+  const root = document.documentElement;
+  const label = document.querySelector('[data-fret-label]');
+  const rings = document.querySelector('[data-rings]');
+  const NOTE_NAMES = ['E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E'];
+  let fret = 0;
+  let strumTimer = 0;
+
+  // ---------- Scrollen = de vinger schuift over de hals ----------
+  function update() {
+    const scrollable = root.scrollHeight - window.innerHeight;
+    const p = scrollable > 0 ? Math.min(1, window.scrollY / scrollable) : 0;
+    // Welke fret hoort bij deze positie? (zelfde formule als de fretposities in de HTML)
+    fret = 0;
+    for (let n = 1; n <= 12; n++) {
+      if (p >= (1 - 2 ** (-n / 12)) * 2 - 0.02) fret = n;
+    }
+    if (label) label.textContent = fret === 0 ? 'open' : `fret ${fret} · ${NOTE_NAMES[fret]}`;
+    root.classList.add('strum');
+    clearTimeout(strumTimer);
+    strumTimer = window.setTimeout(() => root.classList.remove('strum'), 450);
+  }
+
+  // ---------- Een snaar tokkelen ----------
+  function vibrate(string: HTMLElement) {
+    string.classList.remove('pluck');
+    void string.offsetWidth; // animatie opnieuw starten
+    string.classList.add('pluck');
+  }
+
+  function ring() {
+    if (!rings) return;
+    const r = document.createElement('span');
+    rings.append(r);
+    r.addEventListener('animationend', () => r.remove());
+  }
+
+  // ---------- Geluid ----------
+  // Browsers laten een pagina pas geluid maken nadat de bezoeker iets heeft aangeklikt of getypt.
+  // Daarom zetten we het geluid "aan" bij de eerste klik of toets, waar dan ook op de pagina.
+  // Vanaf dan klinkt een snaar ook als je er gewoon met de muis over gaat.
+  let audio: AudioContext | undefined;
+
+  function unlockAudio() {
+    audio ??= new AudioContext();
+    const ready = audio.state === 'suspended' ? audio.resume() : Promise.resolve();
+    // Het labeltje pas na de klik laten reageren, zodat de klik zelf niet verstoord wordt
+    return ready.then(() => setTimeout(tagSaysPlay, 200));
+  }
+
+  window.addEventListener('pointerdown', unlockAudio, { once: true });
+  window.addEventListener('keydown', unlockAudio, { once: true });
+
+  // ---------- Het labeltje ----------
+  const tag = document.querySelector<HTMLButtonElement>('[data-guitar-tag]');
+  const showText = (name: string) =>
+    tag?.querySelectorAll<HTMLElement>('[data-tag-text]').forEach((el) => (el.hidden = el.dataset.tagText !== name));
+
+  // Al eens gespeeld op een vorige pagina? Dan een korter zinnetje.
+  try {
+    if (localStorage.getItem('guitar-played')) showText('again');
+  } catch {
+    // geen localStorage: gewoon de uitleg tonen
+  }
+
+  // Het geluid staat aan: het labeltje juicht even en valt dan van de snaar
+  let tagDone = false;
+  function tagSaysPlay() {
+    if (tagDone || !tag) return;
+    tagDone = true;
+    showText('play');
+    try {
+      localStorage.setItem('guitar-played', '1');
+    } catch {
+      // niet erg
+    }
+    setTimeout(() => tag.classList.add('fall'), 2200);
+    tag.addEventListener('animationend', (e) => {
+      if (e.animationName === 'tag-fall') tag.hidden = true;
+    });
+  }
+
+  // Een gitaartoon maken zonder geluidsbestand: het Karplus-Strong-algoritme.
+  // Begin met ruis, en laat die steeds zachter en ronder terugkaatsen, zoals een snaar.
+  // Elke toon wordt maar één keer berekend en daarna bewaard.
+  const tones = new Map<number, AudioBuffer>();
+
+  function makeTone(ctx: AudioContext, freq: number) {
+    const rate = ctx.sampleRate;
+    const period = Math.round(rate / freq);
+    const data = new Float32Array(Math.round(rate * 2));
+    for (let i = 0; i < data.length; i++) {
+      data[i] = i < period ? Math.random() * 2 - 1 : 0.498 * (data[i - period] + data[i - period + 1]);
+    }
+    const buffer = ctx.createBuffer(1, data.length, rate);
+    buffer.copyToChannel(data, 0);
+    return buffer;
+  }
+
+  function play(freq: number, volume: number) {
+    if (!audio || audio.state !== 'running') return; // nog geen klik geweest: stil
+    const key = Math.round(freq * 100);
+    let buffer = tones.get(key);
+    if (!buffer) {
+      buffer = makeTone(audio, freq);
+      tones.set(key, buffer);
+    }
+    const source = audio.createBufferSource();
+    const gain = audio.createGain();
+    gain.gain.value = volume;
+    source.buffer = buffer;
+    source.connect(gain).connect(audio.destination);
+    source.start();
+  }
+
+  document.querySelectorAll<HTMLElement>('.guitar-body .string').forEach((string) => {
+    const freq = () => Number(string.dataset.freq) * 2 ** (fret / 12);
+    let last = 0;
+
+    // Erover gaan met de muis: de snaar trilt, en klinkt zacht (als het geluid al aan staat)
+    string.addEventListener('pointerenter', () => {
+      const now = performance.now();
+      if (now - last < 120) return; // niet tientallen keren per seconde
+      last = now;
+      vibrate(string);
+      play(freq(), 0.14);
+    });
+
+    // Klikken: zet het geluid aan (eerste keer) en tokkelt de snaar wat harder
+    string.addEventListener('click', () => {
+      vibrate(string);
+      ring();
+      // Eerst wachten tot het geluid echt aan staat, dan pas spelen
+      unlockAudio().then(() => play(freq(), 0.24));
+    });
+  });
+
+  // Op het labeltje klikken: alle zes snaren na elkaar aanslaan, zoals een akkoord
+  const allStrings = document.querySelectorAll<HTMLElement>('.guitar-body .string');
+  tag?.addEventListener('click', () => {
+    unlockAudio().then(() => {
+      ring();
+      allStrings.forEach((string, i) => {
+        setTimeout(() => {
+          vibrate(string);
+          play(Number(string.dataset.freq) * 2 ** (fret / 12), 0.18);
+        }, i * 40);
+      });
+    });
+  });
+
+  window.addEventListener('scroll', () => requestAnimationFrame(update), { passive: true });
+
+  // Bij het laden: één keer aanslaan, met een geluidsgolf uit het klankgat (zonder geluid)
+  update();
+  ring();
+</script>

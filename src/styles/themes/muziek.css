@@ -1,0 +1,939 @@
+@layer base {
+  :root[data-theme='muziek'] {
+    color-scheme: light;
+
+    --color-bg: #e9cf9f;
+    --color-surface: rgb(255 246 226 / 0.8);
+    --color-fg: #2b170d;
+    --color-muted: #6a4a33;
+    --color-accent: #17706a;
+    --color-line: rgb(90 55 25 / 0.25);
+    --color-success: #2f8a4a;
+
+    --font-heading: 'Young Serif', Georgia, serif;
+    --radius-theme: 10px;
+  }
+
+  /* Sparrenhout */
+  :root[data-theme='muziek'] body {
+    position: relative;
+    background:
+      url('/themes/muziek/wood.svg') center top / 900px 900px,
+      linear-gradient(90deg, #e2c28c, #eed6a8 40%, #e9cd9b 70%, #dcb980);
+  }
+
+  :root[data-theme='muziek'] h1,
+  :root[data-theme='muziek'] h2,
+  :root[data-theme='muziek'] h3 {
+    font-weight: 400;
+  }
+
+  /* De header als de rand van een gitaar: binding en een fijne biesrand (purfling) */
+  :root[data-theme='muziek'] .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    border-bottom: 0;
+    background: rgb(240 222 186 / 0.88);
+    backdrop-filter: blur(8px);
+    box-shadow:
+      0 2px 0 #2b170d,
+      0 4px 0 #f6ead0,
+      0 5px 0 #2b170d,
+      0 7px 0 #7c3b22;
+  }
+
+  /* Knoppen met een parelmoerglans, zoals de inlays op een gitaarhals */
+  :root[data-theme='muziek'] a.bg-accent {
+    background: linear-gradient(
+      120deg,
+      #17706a,
+      #3f6fa0 45%,
+      #6c4f9a 70%,
+      #17706a
+    );
+    background-size: 200% 100%;
+    color: #fff8ec;
+    transition: background-position 0.6s ease;
+  }
+
+  :root[data-theme='muziek'] a.bg-accent:hover {
+    background-position: 100% 0;
+  }
+}
+
+:root[data-theme='muziek'] .hero-title {
+  font-size: clamp(3rem, 8vw, 6rem);
+  line-height: 1;
+}
+
+/* ---------- Decoratie: standaard verborgen ---------- */
+.guitar-body,
+.guitar-air,
+.fretboard {
+  display: none;
+}
+
+/* ---------- Het gitaarlijf: scrollt mee met de pagina ---------- */
+:root[data-theme='muziek'] .guitar-body {
+  /* Afstand van de rechterrand tot het midden van de snaren: in de lege strook naast de inhoud (70rem breed).
+     En de grootte van het klankgat. */
+  --cx: clamp(56px, calc((100vw - 70rem) / 4 + 10px), 150px);
+  --hole: min(28vw, 400px);
+
+  display: block;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Het einde van de hals, boven het klankgat */
+.guitar-body .neck-end {
+  position: absolute;
+  top: 0;
+  right: calc(var(--cx) - 52px);
+  width: 104px;
+  height: 186px;
+  border-radius: 0 0 6px 6px;
+  background: linear-gradient(90deg, #2a140a, #4a2716 50%, #2a140a);
+  box-shadow: 0 6px 16px rgb(43 23 13 / 0.3);
+}
+
+.guitar-body .neck-end .fret {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(#f2f2f2, #9aa0a6);
+}
+
+.guitar-body .soundhole {
+  position: absolute;
+  top: 200px;
+  right: calc(var(--cx) - var(--hole) / 2);
+  width: var(--hole);
+  aspect-ratio: 1;
+}
+
+.guitar-body .rosette {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, #1a0d06 0 56%, transparent 56.5%),
+    radial-gradient(
+      circle,
+      transparent 0 59%,
+      #2b170d 59% 60%,
+      #f6ead0 60% 61%,
+      transparent 61% 79%,
+      #f6ead0 79% 80%,
+      #2b170d 80% 81%,
+      transparent 81%
+    ),
+    repeating-conic-gradient(
+      var(--r1, #7c3b22) 0 3deg,
+      var(--r2, #f0dcb2) 3deg 6deg,
+      var(--r3, #17706a) 6deg 9deg,
+      var(--r4, #2b170d) 9deg 12deg
+    );
+  mask: radial-gradient(
+    circle,
+    black 0 61%,
+    transparent 61% 62%,
+    black 62% 78%,
+    transparent 78% 79%,
+    black 79% 81.5%,
+    transparent 82%
+  );
+}
+
+/* Geluidsgolven die uit het klankgat komen als je een snaar aanslaat */
+.guitar-body .rings span {
+  position: absolute;
+  inset: 22%;
+  border: 2px solid rgb(23 112 106 / 0.6);
+  border-radius: 50%;
+  animation: ring-out 1.8s ease-out forwards;
+}
+
+@keyframes ring-out {
+  from {
+    scale: 1;
+    opacity: 0.8;
+  }
+  to {
+    scale: 2.3;
+    opacity: 0;
+  }
+}
+
+/* Zes snaren over de hele lengte, van de hals tot de brug */
+.guitar-body .strings {
+  position: absolute;
+  top: 0;
+  bottom: 90px;
+  right: calc(var(--cx) - 38px);
+  z-index: 1; /* over het zadel van de brug, tot aan de pinnen */
+  display: flex;
+  gap: 13px;
+}
+
+.guitar-body .string {
+  position: relative;
+  width: 2.8px;
+  height: 100%;
+  background: linear-gradient(90deg, #8a6a3a, #f2dca8 45%, #7a5a2c);
+  box-shadow: 2px 0 3px rgb(43 23 13 / 0.35);
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+/* Een bredere, onzichtbare zone, zodat een snaar makkelijk te raken is */
+.guitar-body .string::before {
+  content: '';
+  position: absolute;
+  inset: 0 -7px;
+}
+
+.guitar-body .string:nth-child(2) {
+  width: 2.4px;
+}
+
+.guitar-body .string:nth-child(3) {
+  width: 2px;
+}
+
+/* De drie dunste snaren zijn staal, niet brons */
+.guitar-body .string:nth-child(n + 4) {
+  background: linear-gradient(90deg, #8b8f94, #f4f6f8 45%, #8b8f94);
+}
+
+.guitar-body .string:nth-child(4) {
+  width: 1.6px;
+}
+
+.guitar-body .string:nth-child(5) {
+  width: 1.2px;
+}
+
+.guitar-body .string:nth-child(6) {
+  width: 0.9px;
+}
+
+/* Bij het scrollen trillen alle snaren zacht */
+:root.strum .guitar-body .string {
+  animation: string-buzz 0.09s linear infinite alternate;
+}
+
+@keyframes string-buzz {
+  from {
+    translate: -1px 0;
+  }
+  to {
+    translate: 1px 0;
+  }
+}
+
+/* Een getokkelde snaar trilt sterk en dooft dan uit */
+.guitar-body .string.pluck {
+  animation: string-pluck 1.2s linear;
+}
+
+@keyframes string-pluck {
+  0% {
+    translate: 0 0;
+    filter: blur(0);
+  }
+  4% {
+    translate: 4px 0;
+    filter: blur(1px);
+  }
+  8% {
+    translate: -4px 0;
+  }
+  12% {
+    translate: 3.5px 0;
+  }
+  16% {
+    translate: -3px 0;
+  }
+  22% {
+    translate: 2.5px 0;
+  }
+  28% {
+    translate: -2px 0;
+  }
+  36% {
+    translate: 1.5px 0;
+  }
+  46% {
+    translate: -1px 0;
+  }
+  60% {
+    translate: 0.6px 0;
+  }
+  100% {
+    translate: 0 0;
+    filter: blur(0);
+  }
+}
+
+/* De brug onderaan, met het zadel en zes witte pinnen */
+.guitar-body .bridge {
+  position: absolute;
+  bottom: 64px;
+  right: calc(var(--cx) - 100px);
+  width: 200px;
+  height: 56px;
+  border-radius: 40px / 28px;
+  background: linear-gradient(180deg, #4a2716, #2a140a);
+  box-shadow: 0 6px 14px rgb(43 23 13 / 0.35);
+}
+
+.guitar-body .saddle {
+  position: absolute;
+  top: 9px;
+  left: 52px;
+  right: 52px;
+  height: 5px;
+  border-radius: 2px;
+  background: #f6ead0;
+}
+
+.guitar-body .pins {
+  position: absolute;
+  top: 22px;
+  left: 50%;
+  display: flex;
+  gap: 6.5px;
+  translate: -50% 0;
+}
+
+.guitar-body .pins span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #fffaf0, #d9cbb0);
+}
+
+/* Deze twee horen enkel bij Over mij en Contact (zie onderaan) */
+.guitar-body .backstrip,
+.guitar-body .case {
+  display: none;
+}
+
+/* ---------- Het labeltje aan de snaren ---------- */
+.guitar-tag {
+  display: none;
+}
+
+/* Enkel op pagina's met snaren, en enkel waar je ze met de muis kan bespelen */
+@media (min-width: 1100px) {
+  :root[data-theme='muziek']:not([data-scene='wreck'], [data-scene='deep'])
+    .guitar-tag:not([hidden]) {
+    display: block;
+  }
+}
+
+.guitar-tag {
+  /* Zelfde maten als .guitar-body, zodat het labeltje net onder het klankgat aan de snaren hangt */
+  --cx: clamp(56px, calc((100vw - 70rem) / 4 + 10px), 150px);
+  --hole: min(28vw, 400px);
+
+  position: absolute;
+  top: calc(200px + var(--hole) - 10px);
+  right: max(6px, calc(var(--cx) - 62px));
+  z-index: 2;
+  width: 124px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  transform-origin: 50% 0;
+  animation: tag-swing 3s ease-in-out infinite alternate;
+}
+
+:root[data-scene='reef'] .guitar-tag {
+  --hole: min(18vw, 260px);
+}
+
+/* Het touwtje dat rond de snaar geknoopt is */
+.guitar-tag .cord {
+  display: block;
+  width: 2px;
+  height: 34px;
+  margin: 0 auto;
+  background: #8a6a3a;
+}
+
+/* Het kaartje zelf: zoals het prijslabel aan een nieuwe gitaar */
+.guitar-tag .tag-card {
+  position: relative;
+  /* Altijd even groot, ook als de tekst verandert (anders schuift het kaartje weg onder je muis) */
+  display: grid;
+  place-items: center;
+  min-height: 92px;
+  padding: 18px 10px 10px;
+  border-radius: 6px 6px 10px 10px;
+  background: #fbf3e0;
+  box-shadow: 0 6px 14px rgb(43 23 13 / 0.25);
+  color: #2b170d;
+  font-family: 'Caveat', cursive;
+  font-size: 20px;
+  line-height: 1.05;
+  text-align: center;
+  rotate: -4deg;
+}
+
+/* Het gaatje bovenaan het kaartje */
+.guitar-tag .tag-card::before {
+  content: '';
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  border: 2px solid #8a6a3a;
+  border-radius: 50%;
+  translate: -50% 0;
+}
+
+.guitar-tag small {
+  font-size: 16px;
+  color: #6a4a33;
+}
+
+.guitar-tag .arrow {
+  display: inline-block;
+  color: #17706a;
+  animation: arrow-nudge 1.2s ease-in-out infinite alternate;
+}
+
+.guitar-tag:hover .tag-card,
+.guitar-tag:focus-visible .tag-card {
+  background: #fffaf0;
+  box-shadow: 0 8px 18px rgb(43 23 13 / 0.3);
+}
+
+@keyframes tag-swing {
+  from {
+    rotate: -5deg;
+  }
+  to {
+    rotate: 5deg;
+  }
+}
+
+@keyframes arrow-nudge {
+  to {
+    translate: 3px -3px;
+  }
+}
+
+/* Als het geluid aan staat, valt het labeltje van de snaar */
+.guitar-tag.fall {
+  animation: tag-fall 0.9s ease-in forwards;
+}
+
+@keyframes tag-fall {
+  0% {
+    rotate: 0deg;
+    translate: 0 0;
+    opacity: 1;
+  }
+  30% {
+    rotate: 18deg;
+    translate: 0 6px;
+  }
+  100% {
+    rotate: 60deg;
+    translate: 20px 260px;
+    opacity: 0;
+  }
+}
+
+/* ---------- De lucht voor de gitaar: blijft staan terwijl je scrolt ---------- */
+:root[data-theme='muziek'] .guitar-air {
+  display: block;
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Een zacht lampje dat traag over het hout schuift */
+.guitar-air .light {
+  position: absolute;
+  top: -30vh;
+  left: -40vw;
+  width: 70vw;
+  height: 160vh;
+  background: radial-gradient(
+    closest-side,
+    rgb(255 248 228 / 0.45),
+    transparent
+  );
+  mix-blend-mode: soft-light;
+  animation: light-sweep 26s ease-in-out infinite alternate;
+}
+
+@keyframes light-sweep {
+  to {
+    translate: 110vw 0;
+  }
+}
+
+/* Stofjes die in het licht zweven */
+.guitar-air .motes {
+  position: absolute;
+  inset: 0 0 -100% 0;
+  background-image:
+    radial-gradient(
+      1.5px 1.5px at 20% 30%,
+      rgb(255 250 235 / 0.9),
+      transparent
+    ),
+    radial-gradient(1px 1px at 70% 60%, rgb(255 250 235 / 0.8), transparent),
+    radial-gradient(2px 2px at 40% 80%, rgb(255 250 235 / 0.6), transparent),
+    radial-gradient(1px 1px at 85% 20%, rgb(255 250 235 / 0.8), transparent);
+  background-size: 280px 280px;
+  animation: motes-drift 80s linear infinite;
+}
+
+@keyframes motes-drift {
+  to {
+    translate: 40px -50%;
+  }
+}
+
+/* Muzieknootjes die opstijgen en zacht heen en weer wiegen */
+.guitar-air .note {
+  position: absolute;
+  bottom: -40px;
+  left: var(--x);
+  width: var(--size);
+  height: auto;
+  opacity: 0;
+  animation:
+    note-rise var(--duration) linear var(--delay) infinite,
+    note-sway 3.5s ease-in-out var(--delay) infinite alternate;
+}
+
+.guitar-air .note.tone-0 {
+  fill: #6a4a33;
+}
+
+.guitar-air .note.tone-1 {
+  fill: #17706a;
+}
+
+.guitar-air .note.tone-2 {
+  fill: #7c3b22;
+}
+
+.guitar-air .note.tone-3 {
+  fill: #6c4f9a;
+}
+
+@keyframes note-rise {
+  0% {
+    translate: 0 0;
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.6;
+  }
+  80% {
+    opacity: 0.45;
+  }
+  100% {
+    translate: 0 -112vh;
+    opacity: 0;
+  }
+}
+
+@keyframes note-sway {
+  from {
+    rotate: -12deg;
+    margin-left: 0;
+  }
+  to {
+    rotate: 12deg;
+    margin-left: 24px;
+  }
+}
+
+/* ---------- De gitaarhals links: een plectrum schuift van fret naar fret ---------- */
+:root[data-theme='muziek'] .fretboard {
+  position: fixed;
+  top: 20vh;
+  left: 24px;
+  z-index: 30;
+  display: none;
+  width: 30px;
+  height: 60vh;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #2a140a, #4a2716 50%, #2a140a);
+  box-shadow: 0 4px 14px rgb(43 23 13 / 0.35);
+  pointer-events: none;
+}
+
+@media (min-width: 1100px) {
+  :root[data-theme='muziek'] .fretboard {
+    display: block;
+  }
+}
+
+.fretboard .fret {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(#f2f2f2, #9aa0a6);
+}
+
+.fretboard .inlay {
+  position: absolute;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #e9fffb, #9fd8d0 40%, #9a8fd6);
+  translate: -50% -50%;
+}
+
+.fretboard .inlay.double {
+  background: transparent;
+  box-shadow:
+    -7px 0 0 0 #c8ece6,
+    7px 0 0 0 #c8ece6;
+}
+
+.fretboard .pick {
+  position: absolute;
+  top: calc(var(--depth, 0) * 100%);
+  left: 50%;
+  width: 26px;
+  height: 28px;
+  translate: -50% -50%;
+}
+
+.fretboard .pick svg {
+  width: 100%;
+  height: 100%;
+  fill: #17706a;
+  stroke: #fff8ec;
+  stroke-width: 1.5;
+  filter: drop-shadow(0 2px 3px rgb(43 23 13 / 0.4));
+}
+
+/* Het plectrum wiebelt even als je scrolt */
+:root.strum .fretboard .pick svg {
+  animation: pick-wobble 0.15s ease-in-out infinite alternate;
+}
+
+@keyframes pick-wobble {
+  from {
+    rotate: -8deg;
+  }
+  to {
+    rotate: 8deg;
+  }
+}
+
+.fretboard .label {
+  position: absolute;
+  top: 50%;
+  left: 34px;
+  font-size: 12px;
+  color: var(--color-muted);
+  white-space: nowrap;
+  translate: 0 -50%;
+}
+
+/* ================================================================
+   Elke pagina een andere gitaar (data-scene komt uit BaseLayout).
+   De namen komen van het duikthema (scenes.ts): home = open, projecten = reef,
+   projectdetail = sand, over mij = wreck, contact en bedankt = deep.
+   ================================================================ */
+
+/* ---------- Projecten: een sunburst-gitaar, licht in het midden en donker aan de rand ---------- */
+@layer base {
+  :root[data-theme='muziek'][data-scene='reef'] body {
+    background:
+      url('/themes/muziek/wood.svg') center top / 900px 900px,
+      radial-gradient(
+        ellipse 80% 90% at 50% 38%,
+        #f3cd78 0 42%,
+        #dd923a 66%,
+        #7a3612 88%,
+        #2a1208 100%
+      );
+    background-attachment: scroll, fixed;
+  }
+}
+
+:root[data-theme='muziek'][data-scene='reef'] .guitar-body {
+  /* Hier staan de kaarten hoger op de pagina, dus een kleiner klankgat */
+  --hole: min(18vw, 260px);
+}
+
+:root[data-theme='muziek'][data-scene='reef'] .guitar-body .rosette {
+  /* Zwart-wit visgraatmotief */
+  --r1: #1a0d06;
+  --r2: #f6ead0;
+  --r3: #1a0d06;
+  --r4: #f6ead0;
+}
+
+:root[data-theme='muziek'][data-scene='reef'] .fretboard .label {
+  color: #f6ead0;
+}
+
+/* ---------- Projectdetail: een klassieke gitaar met cederhout en nylon snaren ---------- */
+@layer base {
+  :root[data-theme='muziek'][data-scene='sand'] body {
+    background:
+      url('/themes/muziek/wood.svg') center top / 700px 900px,
+      linear-gradient(90deg, #c88653, #dba16b 40%, #d3955f 70%, #bf7c48);
+  }
+
+  :root[data-theme='muziek'][data-scene='sand'] {
+    --color-surface: rgb(255 240 220 / 0.85);
+  }
+}
+
+:root[data-theme='muziek'][data-scene='sand'] .guitar-body .rosette {
+  /* Klassiek mozaïek in groen, rood en crème */
+  --r1: #2f6b3c;
+  --r2: #f6ead0;
+  --r3: #9c2f22;
+  --r4: #e2b866;
+}
+
+/* Nylon: de drie dunne snaren zijn doorschijnend wit */
+:root[data-theme='muziek'][data-scene='sand']
+  .guitar-body
+  .string:nth-child(n + 4) {
+  background: linear-gradient(
+    90deg,
+    rgb(255 255 255 / 0.5),
+    #fffdf5 50%,
+    rgb(255 255 255 / 0.5)
+  );
+  width: 1.8px;
+}
+
+/* De drie dikke snaren: zilverdraad om nylon */
+:root[data-theme='muziek'][data-scene='sand']
+  .guitar-body
+  .string:nth-child(-n + 3) {
+  background: repeating-linear-gradient(0deg, #d9dce0 0 1px, #9ea3a8 1px 2px);
+}
+
+/* Een klassieke brug heeft geen pinnen: de snaren worden vastgeknoopt */
+:root[data-theme='muziek'][data-scene='sand'] .guitar-body .pins span {
+  border-radius: 1px;
+  width: 6px;
+  height: 12px;
+  background: #fffdf5;
+}
+
+/* ---------- Over mij: de achterkant van de gitaar in palissander ---------- */
+@layer base {
+  :root[data-theme='muziek'][data-scene='wreck'] {
+    color-scheme: dark;
+    --color-bg: #3b1c10;
+    --color-surface: rgb(42 20 10 / 0.78);
+    --color-fg: #f6ead0;
+    --color-muted: #d4bc98;
+    --color-accent: #7fd8cc;
+    --color-line: rgb(246 234 208 / 0.2);
+  }
+
+  :root[data-theme='muziek'][data-scene='wreck'] body {
+    background:
+      url('/themes/muziek/wood.svg') center top / 500px 900px,
+      linear-gradient(
+        90deg,
+        #2e140a,
+        #4e2614 30%,
+        #3b1c10 50%,
+        #4e2614 70%,
+        #2e140a
+      );
+  }
+
+  :root[data-theme='muziek'][data-scene='wreck'] .site-header {
+    background: rgb(46 20 10 / 0.88);
+  }
+
+  :root[data-theme='muziek'][data-scene='wreck'] a.bg-accent {
+    color: #fff8ec;
+  }
+}
+
+/* Geen klankgat, snaren of brug aan de achterkant */
+:root[data-theme='muziek'][data-scene='wreck'] .guitar-body .soundhole,
+:root[data-theme='muziek'][data-scene='wreck'] .guitar-body .strings,
+:root[data-theme='muziek'][data-scene='wreck'] .guitar-body .bridge {
+  display: none;
+}
+
+/* Bovenaan: de hiel van de hals */
+:root[data-theme='muziek'][data-scene='wreck'] .guitar-body .neck-end {
+  height: 120px;
+  border-radius: 0 0 50px 50px;
+  background: linear-gradient(90deg, #4a2414, #7a4224 50%, #4a2414);
+}
+
+:root[data-theme='muziek'][data-scene='wreck'] .guitar-body .neck-end .fret {
+  display: none;
+}
+
+/* De ingelegde middenstrook over de hele lengte */
+:root[data-theme='muziek'][data-scene='wreck'] .guitar-body .backstrip {
+  display: block;
+  position: absolute;
+  top: 120px;
+  bottom: 0;
+  right: calc(var(--cx) - 13px);
+  width: 26px;
+  border-inline: 2px solid #f6ead0;
+  background:
+    linear-gradient(
+      90deg,
+      #1a0d06 0 3px,
+      transparent 3px calc(100% - 3px),
+      #1a0d06 calc(100% - 3px)
+    ),
+    repeating-linear-gradient(
+      45deg,
+      #f6ead0 0 4px,
+      #1a0d06 4px 8px,
+      #17706a 8px 12px,
+      #1a0d06 12px 16px
+    );
+  box-shadow: 0 0 0 1px #1a0d06;
+}
+
+/* Lichtere nootjes op het donkere hout */
+:root[data-theme='muziek'][data-scene='wreck'] .guitar-air .note.tone-0 {
+  fill: #e8d3a6;
+}
+
+:root[data-theme='muziek'][data-scene='wreck'] .guitar-air .note.tone-2 {
+  fill: #e0a070;
+}
+
+/* ---------- Contact: de gitaarkoffer, met de gitaar eruit ---------- */
+@layer base {
+  :root[data-theme='muziek'][data-scene='deep'] {
+    color-scheme: dark;
+    --color-bg: #3b1730;
+    --color-surface: rgb(36 10 30 / 0.7);
+    --color-fg: #fbeee6;
+    --color-muted: #dcc2d2;
+    --color-accent: #f0c46a;
+    --color-line: rgb(251 238 230 / 0.18);
+  }
+
+  /* Fluweel: een fijne ruis met zachte glansvlekken */
+  :root[data-theme='muziek'][data-scene='deep'] body {
+    background:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 .8 0 0 0 0 .9 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E"),
+      radial-gradient(
+        ellipse 60% 50% at 30% 30%,
+        rgb(140 60 110 / 0.35),
+        transparent
+      ),
+      radial-gradient(
+        ellipse 50% 60% at 80% 80%,
+        rgb(120 40 90 / 0.3),
+        transparent
+      ),
+      #3b1730;
+  }
+
+  :root[data-theme='muziek'][data-scene='deep'] .site-header {
+    background: rgb(40 12 32 / 0.88);
+  }
+
+  :root[data-theme='muziek'][data-scene='deep'] a.bg-accent {
+    background: #f0c46a;
+    color: #2a0f22;
+  }
+}
+
+/* De gitaar is uit de koffer: geen hals, klankgat, snaren of brug */
+:root[data-theme='muziek'][data-scene='deep'] .guitar-body > :not(.case) {
+  display: none;
+}
+
+:root[data-theme='muziek'][data-scene='deep'] .guitar-body .case {
+  display: block;
+  position: absolute;
+  top: 90px;
+  right: calc(-1 * min(14vw, 140px));
+  width: auto;
+  height: min(86vh, 860px);
+}
+
+:root[data-theme='muziek'][data-scene='deep'] .guitar-air .note.tone-0 {
+  fill: #f0c46a;
+}
+
+:root[data-theme='muziek'][data-scene='deep'] .guitar-air .note.tone-2 {
+  fill: #e8a0c8;
+}
+
+:root[data-theme='muziek'][data-scene='deep'] .guitar-air .light {
+  mix-blend-mode: screen;
+  opacity: 0.25;
+}
+
+:root[data-theme='muziek'][data-scene='deep'] .fretboard .label,
+:root[data-theme='muziek'][data-scene='wreck'] .fretboard .label {
+  color: var(--color-muted);
+}
+
+/* Op een smal scherm ligt de gitaar achter de tekst: zachter, en niet aanklikbaar */
+@media (max-width: 1099px) {
+  .guitar-body .neck-end,
+  .guitar-body .soundhole,
+  .guitar-body .strings,
+  .guitar-body .bridge {
+    opacity: 0.3;
+  }
+
+  .guitar-body .string {
+    pointer-events: none;
+  }
+}
+
+/* Wie in zijn systeem "minder beweging" vraagt, krijgt een stille gitaar */
+@media (prefers-reduced-motion: reduce) {
+  .guitar-body *,
+  .guitar-air *,
+  .fretboard * {
+    animation: none !important;
+  }
+
+  .guitar-air .note {
+    display: none;
+  }
+
+  .guitar-tag,
+  .guitar-tag .arrow {
+    animation: none;
+  }
+
+  .guitar-tag.fall {
+    animation: none;
+    display: none;
+  }
+}

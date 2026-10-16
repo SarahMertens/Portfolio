@@ -93,6 +93,12 @@ export const ui = {
     'demo.newTab': 'Open in een nieuw tabblad',
     'demo.loadNote': 'De demo laadt pas als je op de knop klikt.',
     'demo.frameTitle': 'Live demo van',
+    'theme.label': 'Kies een thema',
+    'guitar.first': 'Tik één keer op een snaar',
+    'guitar.then': 'en speel dan met je muis',
+    'guitar.again': 'Tik hier om weer te spelen',
+    'guitar.play': 'Speel maar!',
+    'guitar.strum': 'Sla alle snaren aan en zet het geluid aan',
   },
   en: {
     'site.description':
@@ -178,6 +184,12 @@ export const ui = {
     'demo.newTab': 'Open in a new tab',
     'demo.loadNote': 'The demo only loads when you click the button.',
     'demo.frameTitle': 'Live demo of',
+    'theme.label': 'Choose a theme',
+    'guitar.first': 'Tap a string once',
+    'guitar.then': 'then play with your mouse',
+    'guitar.again': 'Tap here to play again',
+    'guitar.play': 'Go ahead, play!',
+    'guitar.strum': 'Strum all strings and turn on the sound',
   },
 } as const;
 

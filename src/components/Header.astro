@@ -1,5 +1,6 @@
 ---
 import { switchLangPath, useTranslations, type Lang, type UiKey } from '../i18n/ui';
+import { themes } from '../themes';
 
 interface Props {
   lang: Lang;
@@ -15,6 +16,7 @@ const links: { path: string; label: UiKey }[] = [
   { path: 'contact', label: 'nav.contact' },
 ];
 
+// Haal de slash op het einde weg, zodat '/nl/projects/' en '/nl/projects' gelijk zijn
 const normalize = (path: string) => path.replace(/\/$/, '');
 const currentPath = normalize(Astro.url.pathname);
 
@@ -26,7 +28,7 @@ const otherLangHref = switchLangPath(Astro.url.pathname, otherLang);
   <a class="font-mono text-xl font-bold text-fg no-underline" href={`/${lang}/`}>SM</a>
 
   <nav class="flex-1" aria-label={t('nav.label')}>
-    <ul class="flex flex-wrap gap-4">
+    <ul class="flex flex-wrap gap-x-4 gap-y-1 text-sm sm:text-base">
       {
         links.map(({ path, label }) => {
           const href = normalize(`/${lang}/${path}`);
@@ -46,6 +48,25 @@ const otherLangHref = switchLangPath(Astro.url.pathname, otherLang);
     </ul>
   </nav>
 
+  {
+    themes.length > 1 && (
+      <div class="flex gap-1" role="group" aria-label={t('theme.label')}>
+        {themes.map((theme) => (
+          <button
+            type="button"
+            data-theme-choice={theme.id}
+            aria-pressed="false"
+            title={theme.label[lang]}
+            class="flex cursor-pointer items-center gap-1 rounded-theme border border-line px-2 py-1 text-sm text-fg hover:border-accent aria-pressed:border-accent aria-pressed:bg-surface"
+          >
+            <span aria-hidden="true">{theme.icon}</span>
+            <span class="sr-only md:not-sr-only">{theme.label[lang]}</span>
+          </button>
+        ))}
+      </div>
+    )
+  }
+
   <a
     class="rounded-theme border border-line px-2 py-1 font-mono text-fg no-underline hover:border-accent"
     href={otherLangHref}
@@ -56,3 +77,32 @@ const otherLangHref = switchLangPath(Astro.url.pathname, otherLang);
     {otherLang.toUpperCase()}
   </a>
 </header>
+
+<script>
+  const root = document.documentElement;
+  const buttons = document.querySelectorAll<HTMLButtonElement>('[data-theme-choice]');
+
+  function markActive() {
+    buttons.forEach((button) => {
+      button.setAttribute('aria-pressed', String(button.dataset.themeChoice === root.dataset.theme));
+    });
+  }
+
+  buttons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const theme = button.dataset.themeChoice;
+      if (!theme) return;
+      root.dataset.theme = theme;
+      try {
+        localStorage.setItem('theme', theme);
+      } catch {
+        // Niet bewaren lukt niet (bv. privévenster): het thema geldt dan enkel voor deze pagina
+      }
+      markActive();
+      // Andere onderdelen (zoals de dieptemeter) laten weten dat het thema veranderd is
+      window.dispatchEvent(new Event('scroll'));
+    });
+  });
+
+  markActive();
+</script>
