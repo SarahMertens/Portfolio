@@ -22,14 +22,14 @@ export const ui = {
     'home.metaTitle': 'Full stack developer in opleiding',
     'home.eyebrow': 'Full stack developer in opleiding',
     'home.intro':
-      'Ik ben laatstejaarsstudent Toegepaste Informatica aan HOGENT. Ik bouw software die echte problemen oplost voor echte mensen: van een boekhoudapp voor een vrijwilligersgroep tot het ticketbeheer van een toneelgroep.',
+      'Ik ben laatstejaarsstudent Toegepaste Informatica aan HOGENT. Ik bouw het liefst software die na de deadline blijft bestaan: een boekhoudapp voor een vrijwilligersgroep, en het ticketbeheer en de website van een toneelgroep. Die website staat sinds november 2026 online.',
     'home.status': 'Op zoek naar een stageplaats',
     'home.ctaProjects': 'Bekijk mijn projecten',
     'home.ctaContact': 'Neem contact op',
     'home.whyTitle': 'Wat ik meebreng',
-    'home.why1Title': 'Voor echte gebruikers',
+    'home.why1Title': 'In gebruik, niet alleen ingediend',
     'home.why1Text':
-      'Mijn projecten worden echt gebruikt, door een vrijwilligersorganisatie, een vriendenkring en een toneelgroep. Ik luister eerst, en bouw dan.',
+      'Mijn projecten worden gebruikt door een vrijwilligersgroep, een vriendenkring en een toneelgroep. Ik vraag eerst wat ze nodig hebben, en bouw het daarna.',
     'home.why2Title': 'Veiligheid in mijn achtergrond',
     'home.why2Text':
       'Als bewakingsagent denk ik vanzelf na over wie wat mag zien. Dat neem ik mee in mijn code: rollen, rechten en geen geheimen in de repository.',
@@ -125,14 +125,14 @@ export const ui = {
     'home.metaTitle': 'Full stack developer in training',
     'home.eyebrow': 'Full stack developer in training',
     'home.intro':
-      "I'm a final-year Applied Computer Science student at HOGENT. I build software that solves real problems for real people: from a bookkeeping app for a volunteer group to the box office of a theatre company.",
+      "I'm a final-year Applied Computer Science student at HOGENT. I like building software that is still used after the deadline: a bookkeeping app for a volunteer group, and the box office and website of a theatre company. That website has been live since November 2026.",
     'home.status': 'Looking for an internship',
     'home.ctaProjects': 'See my projects',
     'home.ctaContact': 'Get in touch',
     'home.whyTitle': 'What I bring',
-    'home.why1Title': 'Built for real users',
+    'home.why1Title': 'In use, not just handed in',
     'home.why1Text':
-      'My projects are used for real, by a volunteer organisation, a social club and a theatre group. I listen first, then I build.',
+      'My projects are used by a volunteer group, a social club and a theatre company. I first ask what they need, then I build it.',
     'home.why2Title': 'Security is in my background',
     'home.why2Text':
       'As a security guard and prevention advisor, I naturally think about who may see what. I bring that into my code: roles, permissions and no secrets in the repository.',
